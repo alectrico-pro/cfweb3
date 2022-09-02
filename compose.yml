@@ -1,0 +1,37 @@
+
+volumes:
+  bundle:
+
+services:
+  contract:
+    tty: true
+    hostname: contract.example.com
+    build:
+      context: ../cfweb3
+      target: contract
+    environment:
+      DPAK: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+    volumes:
+      - ../cfweb3/worker:/root
+    ports:
+      - "5001:5000"
+    command:
+      - dpak= "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145" npx hardhat node
+
+  frontend:
+    tty: true
+    hostname: frontend.example.com
+    environment:
+      HOST: 0.0.0.0 
+    build:
+      context: ../cfweb3
+      target: frontend
+    volumes:
+      - ../cfweb3/worker:/root
+    ports:
+      - "5002:5000"
+    command:
+      - npm
+      - run 
+      - dev
+      - -- host
