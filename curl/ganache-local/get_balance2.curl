@@ -1,0 +1,5 @@
+cuenta="0x290422ec6eadc2cc12acd98c50333720382ca86b"
+curl -X POST \
+-H "Content-Type: application/json" \
+--data '{"jsonrpc": "2.0", "id": 1, "method": "eth_getBalance", "params": ["0x290422ec6eadc2cc12acd98c50333720382ca86b", "latest"], "id":1}' \
+"http://127.0.0.1:8545"

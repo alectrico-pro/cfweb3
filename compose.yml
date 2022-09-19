@@ -1,22 +1,82 @@
 
-volumes:
-  bundle:
-
 services:
-  contract:
+
+  app: &app
     tty: true
-    hostname: contract.example.com
+    stdin_open: true
     build:
-      context: ../cfweb3
+      context: .
       target: contract
     environment:
-      DPAK: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+      dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+      NODE_OPTIONS: "--openssl-legacy-provider"
+      ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
+
+
+  compile: 
+    <<: *app
+    #artifacts es importante para nosotros pues necesitamos el código binario
+    #para luego hacer deploy en el ganache local
+    #usando curl
+    #buscar en la carpeta curl ganache-local
+    #Esto es porque no funciona hacer deploy a la dirección 0.0.0.0:8545
+    #usando el scritps/deploy.js
+    #artifacts requiere que sea declarado en hardhat.config.js
+    #pues no aparecerán los compilados
+    #También hay que colocarlo como mapeo de docker para tener acceso al contenido 
+    #Desde fuera de la imagen. De paso que quede grabado en el repositorio
+    #module.exports = {
+    #olidity: "0.8.9",
+    #paths: {
+    #rtifacts: './src/artifacts',
+    #},
+    #etworks: {
+    #ardhat: {
+    # chainId: 1337
+    #}
+    #}
+    #;
+
     volumes:
-      - ../cfweb3/worker:/root
+      - ./contract/artifacts:/usr/app/contract/artifacts
+    command: "npx hardhat compile --force --verbose"
+
+  test:
+    <<: *app
+    command: "npx hardhat test --verbose"
+
+  console:
+    <<: *app
+    command: "npx hardhat console --verbose"
+
+  node:
+    <<: *app
     ports:
-      - "5001:5000"
-    command:
-      - dpak= "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145" npx hardhat node
+      - "8545:8545"
+    command: "npx hardhat node"
+
+  deploy:
+    <<: *app
+    command: "npx hardhat run scripts/deploy.js"
+
+
+  fund:
+    <<: *app
+    command: "npx hardhat run scripts/fund_localhost.js"
+
+
+
+  #llamar a node en otra pantalla
+  #https://hardhat.org/hardhat-runner/docs/getting-started
+  #no funciona, dice que se rechaza la conexión
+  #Tal vez es un problema de proxies y cosas así.
+  #Hay que cerciorarse de que la dirección 8545:8545 esté en 
+  #service node: en la key ports
+  deply:
+    <<: *app
+    command: "npx hardhat run scripts/deploy.js --network bocaciega"
+
+
 
   frontend:
     tty: true
@@ -24,10 +84,10 @@ services:
     environment:
       HOST: 0.0.0.0 
     build:
-      context: ../cfweb3
+      context: .
       target: frontend
     volumes:
-      - ../cfweb3/worker:/root
+      - ./worker:/root
     ports:
       - "5002:5000"
     command:

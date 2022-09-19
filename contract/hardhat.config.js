@@ -10,9 +10,16 @@ const pk = process.env.dapk
 
 module.exports = {
   solidity: "0.8.4",
+  paths: {
+	  artifacts: './artifacts',
+  },
   networks: {
     hardhat: {
       chainId: 1337
+    },
+   bocaciega: {
+     url: "http://0.0.0.0:8545",
+     accounts: [`0x${pk}`]
     },
     rinkeby: {
       url: "https://rinkeby.infura.io/v3/5707a1c75350408cb408cba40175e252",
