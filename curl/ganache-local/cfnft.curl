@@ -26,16 +26,9 @@ curl -X POST \
     }]
 }
 EOF
-#Los datos en este caso parace que son de un contrato
-#DATA, 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
-##Use eth_getTransactionReceipt to get the contract address, after the transaction was mined, when you created a contract.
-#Esta es la respuesta que obtuve. Debe eser el hash del contrato. Recordar que el hash es una firma del contenido
-#Si cambia una letra del contenido, el hash será otro. Por eso los contratos no pueden ser versionado. Solo pueden
-#enviarse a deploy cada uno por separado.
-##0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf
-echo "-- Eenvío de una transacción cualquiera \n"
+echo "-- Envío de una transacción cualquiera \n"
 
-HASH="0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf"
+HASH="0x5f0d3803b44e5294dea3a687a8d5065ccd6cb087f6b686d54650b6eacff8b2a8"
 METODO="eth_getTransactionReceipt"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -48,19 +41,11 @@ curl -X POST \
   "params": ["$HASH"]
 }
 EOF
-#esta es la respuesta
-#{"jsonrpc":"2.0","id":1,"result":{"transactionHash":"0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf","transactionIndex":"0x0","blockHash":"0x88b01898e61bd3f29055e50b99bc49a4badcac655f5f476d977ffcb43ef7c5e4","blockNumber":"0x2","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":"0x290422ec6eadc2cc12acd98c50333720382ca86b","cumulativeGasUsed":"0x5498","gasUsed":"0x5498","contractAddress":null,"logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x0","status":"0x1","effectiveGasPrice":"0x9184e72a000"}}
-#
-#Se observa la confirmación de que la transacción fue enviada desde una cuenta a otra y que se usó un bloque
-#Me gustaría saber si al llamar a blockNumeber me dice algo
 echo "-- Recibo de la transacción anterior \n"
 curl -X POST \
 -H "Content-Type: application/json" \
 --data '{"jsonrpc": "2.0", "id": 1, "method": "eth_blockNumber", "params": [], "id":83}' \
 "http://127.0.0.1:8545"
-#La respuestsa es 4, 
-#{"jsonrpc":"2.0","id":83,"result":"0x4"}
-#Supongo que me dice que hay cuatro bloques. Si la transacción anterior está en el bloque 2 y hubiese 4 bloques. Suponto que hay dos bloques que no se habrían usado todavía:
 #
 echo "-- obtención de un bloque de la Blockchain dado por su número de bloque \n"
 
@@ -76,20 +61,9 @@ curl -X POST \
   "params": ["$CUENTA_DE_ORIGEN", "latest"]
 }
 EOF
-# "latest", // state at the latest block
-# respuesta es 7 transacciones
-#{"jsonrpc":"2.0","id":1,"result":"0x7"}
-#
-#parace aceptable pues he hecho unas pocas transaccione
-#cada vez que ejecuto este bloaque aumenta en una transacción.
-#AHora podría ver las transacciones que están eun un bloque
-#PAra ello usaré el hash del bloque usado anteriormente
-#REcordar que los hashs siempre están relacionados con el contenido en forma unívoca,
-#ASí que estos ejercicios siempren obtendrán los mismos hash si se ejecutan solo los
-#que estén aquí.
 echo "-- No. transacciones de cuenta de origen, anotadas en último bloque \n"
 
-BLOCK_HASH="0x88b01898e61bd3f29055e50b99bc49a4badcac655f5f476d977ffcb43ef7c5e4"
+BLOCK_HASH="0x3ed5cc3959d6f49929f1bd551ed6905c5961c89fcb20644aaaf941c7f59f1c42"
 METODO="eth_getBlockTransactionCountByHash"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -102,12 +76,6 @@ curl -X POST \
   "params": ["$BLOCK_HASH"]
 }
 EOF
-#respuesta
-#{"jsonrpc":"2.0","id":1,"result":"0x5"}
-#se reportan cinco transacciones en el bloque, pero
-#eso depende de cuantas veces haya realizado esto
-#Esto es llamativo, pues el hash del bloque no cambia aunque se sigan
-#agregando trasnascciones
 echo "\n -- Cantidad de transacciones en bloque, el cual es identificado por su HASH \n"
 
 BLOCK_NUMBER="0x2"
@@ -123,28 +91,9 @@ curl -X POST \
   "params": ["$BLOCK_NUMBER"]
 }
 EOF
-#respuesta es:
-#{"jsonrpc":"2.0","id":1,"result":"0x1"}
-#dice que hay una sola transacción en el bloque 2, pero ese bloque tiene un hash x y al interrogar por el hash x devuevle 7 o más
 echo "-- No. transaciones existentes en No. de bloque \n"
 
-CODE_ADDRESS="000"
-BLOCK_NUMBER="0x2"
-METODO="eth_getCode"
-curl -X POST \
--H "Content-Type: application/json" \
-"http://127.0.0.1:8545" \
---data @/dev/stdin<<EOF
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "$METODO",
-  "params": ["$CODE_ADDRESS", "BLOCK_NUMBER"]
-}
-EOF
-echo "-- Código existente desde la dirección, en No. de bloque \n"
-
-TX_HASH="0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf"
+TX_HASH="0x5f0d3803b44e5294dea3a687a8d5065ccd6cb087f6b686d54650b6eacff8b2a8"
 METODO="eth_getTransactionByHash"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -158,35 +107,11 @@ curl -X POST \
 }
 EOF
 echo "-- Transacción identificada por su hash \n"
-#No estaá soportado
-CONTRACT_CODE=""
-METODO="eth_compileSolidity"
-curl -X POST \
--H "Content-Type: application/json" \
-"http://127.0.0.1:8545" \
---data @/dev/stdin<<EOF
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "$METODO",
-  "params": ["$CONTRACT_CODE"]
-}
-EOF
-
-#------------------------------ 
-## https://ethereum.org/en/developers/docs/apis/json-rpc/
-#Estoy hace deploy de un contracto que ya ha sido complidado a binary por un compilador llamado make compile
-#
-#tio@bocaciega:/media/tio/home/sexteto/cfweb3/contract/artifacts/contracts/CFNFT.sol$ ls
-#CFNFT.dbg.json	CFNFT.json  ContextMixin.dbg.json  ContextMixin.json
-#tio@bocaciega:/media/tio/home/sexteto/cfweb3/contract/artifacts/contracts/CFNFT.sol$ 
-#el archivo a buscar está en una carpeta de nombre CFNFT.json y debe buscarse la key bytecode:
-#                            }
-echo "-- Compilar Solidity pero no está soportado en ganache \n"
 
 BINARY="0x60806040526000600f60146101000a81548160ff0219169083151502179055503480156200002c57600080fd5b506040518060400160405280600581526020017f43464e46540000000000000000000000000000000000000000000000000000008152506040518060400160405280600581526020017f43464e465400000000000000000000000000000000000000000000000000000081525060405180606001604052806025815260200162005f026025913982828160029080519060200190620000cd9291906200060f565b508060039080519060200190620000e69291906200060f565b5050506000600c60006101000a81548160ff02191690831515021790555080600e90805190602001906200011c9291906200060f565b50620001416000801b62000135620001ec60201b60201c565b6200020860201b60201c565b620001827f9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a662000176620001ec60201b60201c565b6200020860201b60201c565b620001c37f65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a620001b7620001ec60201b60201c565b6200020860201b60201c565b505050620001e6620001da620001ec60201b60201c565b6200025060201b60201c565b62000724565b6000620002036200031660201b62001b8d1760201c565b905090565b6200021f8282620003c960201b62001c3e1760201c565b6200024b8160016000858152602001908152602001600020620003df60201b62001c4c1790919060201c565b505050565b6000600f60009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905081600f60006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b60003073ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415620003c257600080368080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f820116905080830192505050505050509050600080369050905073ffffffffffffffffffffffffffffffffffffffff818301511692505050620003c6565b3390505b90565b620003db82826200041760201b60201c565b5050565b60006200040f836000018373ffffffffffffffffffffffffffffffffffffffff1660001b6200050860201b60201c565b905092915050565b6200042982826200058260201b60201c565b6200050457600160008084815260200190815260200160002060000160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff021916908315150217905550620004a9620001ec60201b60201c565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16837f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45b5050565b60006200051c8383620005ec60201b60201c565b620005775782600001829080600181540180825580915050600190039060005260206000200160009091909190915055826000018054905083600101600084815260200190815260200160002081905550600190506200057c565b600090505b92915050565b600080600084815260200190815260200160002060000160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff16905092915050565b600080836001016000848152602001908152602001600020541415905092915050565b8280546200061d90620006bf565b90600052602060002090601f0160209004810192826200064157600085556200068d565b82601f106200065c57805160ff19168380011785556200068d565b828001600101855582156200068d579182015b828111156200068c5782518255916020019190600101906200066f565b5b5090506200069c9190620006a0565b5090565b5b80821115620006bb576000816000905550600101620006a1565b5090565b60006002820490506001821680620006d857607f821691505b60208210811415620006ef57620006ee620006f5565b5b50919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b6157ce80620007346000396000f3fe6080604052600436106102455760003560e01c80636a62784211610139578063a22cb465116100b6578063d53913931161007a578063d53913931461087e578063d547741f146108a9578063e63ab1e9146108d2578063e985e9c5146108fd578063f2fde38b1461093a578063f47c84c51461096357610245565b8063a22cb4651461079b578063b66a0e5d146107c4578063b88d4fde146107db578063c87b56dd14610804578063ca15c8731461084157610245565b80639010d07c116100fd5780639010d07c146106af57806391d14854146106ec57806395d89b4114610729578063a140ae2314610754578063a217fddf1461077057610245565b80636a627842146105f057806370a0823114610619578063715018a6146106565780638456cb591461066d5780638da5cb5b1461068457610245565b80632f2ff15d116101c757806342966c681161018b57806342966c681461050b5780634f6ccce71461053457806355367ba9146105715780635c975abb146105885780636352211e146105b357610245565b80632f2ff15d1461043c5780632f745c591461046557806336568abe146104a25780633f4ba83a146104cb57806342842e0e146104e257610245565b8063095ea7b31161020e578063095ea7b31461035757806318160ddd146103805780631c8b232d146103ab57806323b872dd146103d6578063248a9ca3146103ff57610245565b8062923f9e1461024a57806301ffc9a71461028757806303824f76146102c457806306fdde03146102ef578063081812fc1461031a575b600080fd5b34801561025657600080fd5b506102716004803603"
+echo "--- Obtención en otro lado make -- compile (ambiente hardhat) -, del código binario del contrato: CFNFT.sol \n"
+
 #Saber cuanto me costará hacer deploy del contrato
-echo "--- Estimación qty Gas que consumirá el envió de la transacción con el binary \n"
 METODO="eth_estimateGas"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -203,7 +128,8 @@ EOF
 #{"jsonrpc":"2.0","id":1,"result":"0x1959e"}
 #0x1959e GWEI en hexadecimal
 #
-echo "--- Obtención en otro lado make -- compile (ambiente hardhat) -, del código binario del contrato: CFNFT.sol \n"
+echo "--- Estimación qty Gas que consumirá el envió de la transacción con el binary \n"
+
 #Esto hace el deploy
 METODO="eth_sendTransaction"
 curl -X POST \
@@ -217,15 +143,10 @@ curl -X POST \
   "params": [{"from": "$CUENTA_DE_ORIGEN", "gas": "0x1c31e2",  "data": "$BINARY"}]
 }
 EOF
-#respuesta eS:
-#{"jsonrpc":"2.0","id":1,"result":"0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b"}
-#
-#
-#Se puede llamar a getTransaccionReceipt para investigar la dircción del contrato, solo para el caso en 
-#que dicho contracto hay sido realmente deployed
-echo "-- Recibo de transacción con el binario  \n"
+echo "-- DEPLOY: Envío de transacción con el binario  \n"
 
-HASH="0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b"
+HASH="0x82f15f3a96591fdc64c4e169239bbb216e2cb83198ace661d10657bcaea405c7"
+#HASH="0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b"
 METODO="eth_getTransactionReceipt"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -238,16 +159,39 @@ curl -X POST \
   "params": ["$HASH"]
 }
 EOF
-#respuesta es:
-#{"transactionHash":"0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b","transactionIndex":"0x0","blockHash":"0x646b598a0f0339e38bc60c5a024e587b59ca3efa424c9af145a0d79c1da6ede1","blockNumber":"0xe","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":null,"cumulativeGasUsed":"0x1959e","gasUsed":"0x1959e","contractAddress":"0x0dcd1bf9a1b36ce34237eeafef220932846bcd82","logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","status":"0x1","effectiveGasPrice":"0x44d22a3b"}}
+echo "-- Recibo de transacción con el binario  \n"
+#
+#respuesta para este caso (CFNFT.sol) es:
+#{"jsonrpc":"2.0","id":1,"result":{"transactionHash":"0x82f15f3a96591fdc64c4e169239bbb216e2cb83198ace661d10657bcaea405c7","transactionIndex":"0x0","blockHash":"0x3ed5cc3959d6f49929f1bd551ed6905c5961c89fcb20644aaaf941c7f59f1c42","blockNumber":"0x2b","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":null,"cumulativeGasUsed":"0x1c31e2","gasUsed":"0x1c31e2","contractAddress":"0x99bba657f2bbc93c02d617f8ba121cb8fc104acf","logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","status":"0x0","effectiveGasPrice":"0x3bd9b479"}}-
 
 #Se observa un valor no nulo para la dirección del contrato, con lo que debemos entender que existen el contrato en el ganache
-DIRECCION_DEL_CONTRATO="0x0dcd1bf9a1b36ce34237eeafef220932846bcd82"
+#
+#DIRECCION_DEL_CONTRATO="0x0dcd1bf9a1b36ce34237eeafef220932846bcd82"
+DIRECCION_DEL_CONTRATO="0x99bba657f2bbc93c02d617f8ba121cb8fc104acf"
 #Si el resultado fuese nulo, habría que reintentar la operación pues es probable que el transacción aún no hubiera sido escrita en niigún bloque. Ya se sabe que eso es una tarea de humanos llamados mineros. Ellos pueden decidir si incorporar o no la transacción y cuando hacerlo.
 #
 #
 
-#Ahora podemos interactuar con el contracto,
+
+CODE_ADDRESS="0x99bba657f2bbc93c02d617f8ba121cb8fc104acf"
+BLOCK_NUMBER="0x2"
+METODO="eth_getCode"
+curl -X POST \
+-H "Content-Type: application/json" \
+"http://127.0.0.1:8545" \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": ["$CODE_ADDRESS", "BLOCK_NUMBER"]
+}
+EOF
+echo "-- Código existente desde la dirección, en No. de bloque \n"
+
+
+#-..........................................................................................................
+#Ahora podemos interactuar con el contracto, pero solo está el que hicer para el contrato Multiply
 #Se debe enviar una trasnaccion desde nuestra cuenta hacia la dirección del contrato
 #eth_sendTransaction requires several arguments, specifically from, to and data. From is the public address of our account, and to is the contract address. The data argument contains a payload that defines which method must be called and with which arguments. This is where the ABI (application binary interface) comes into play. The ABI is a JSON file that defines how to define and encode data for the EVM.
 #
@@ -274,7 +218,6 @@ MULTIPLY="0xc6888fa1"
 
 #Combining the function selector and the encoded argument our data will be 0xc6888fa10000000000000000000000000000000000000000000000000000000000000006.
 
-echo " -- Recibo de la transacción anterior \n"
 
 CUENTA_DE_ORIGEN="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 CUENTA_FINAL="0x290422ec6eadc2cc12acd98c50333720382ca86b"
@@ -296,6 +239,4 @@ curl -X POST \
 EOF
 echo "-- Hora de interactuar con el contracto, o prefiera los tests en hardhat make test \n"
 
-#el resultado es:
-#{"jsonrpc":"2.0","id":1,"result":"0x0f5369f045d96128dc3f051139d5de32f1a42085cdc39aea3fb90f9abae247dc"}
 echo "---------------------------------- FIN --------------------------------------------------------"
