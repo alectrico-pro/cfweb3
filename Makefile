@@ -9,8 +9,8 @@ deploy:
 node:
 	docker compose up node
 
-
-f: 
+.PHONY: frontend
+frontend:
 	docker compose up frontend
 
 compile:

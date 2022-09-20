@@ -6,7 +6,9 @@ echo "--------------------------------------------------------------------"
 echo "------------------- CFNFT.sol --------------------------------------"
 echo "------------ PROBANDO acceso al ganache local con http, curl--------"
 CUENTA_DE_ORIGEN="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-CUENTA_FINAL="0x290422ec6eadc2cc12acd98c50333720382ca86b"
+CUENTA_FINAL="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+
+#CUENTA_FINAL="0x290422ec6eadc2cc12acd98c50333720382ca86b"
 curl -X POST \
 -H "Content-Type: application/json" \
 "http://127.0.0.1:8545" \
@@ -127,7 +129,10 @@ EOF
 #respuesta es:
 #{"jsonrpc":"2.0","id":1,"result":"0x1959e"}
 #0x1959e GWEI en hexadecimal
-#
+##{"jsonrpc":"2.0","id":1,"result":"0x4bc5b8"}-
+#0x4bc5b8 GWEI en hexadecimal
+#4965816 GWEI en decimal
+#aproximamdamente 5000 clp me sale el deploy
 echo "--- Estimación qty Gas que consumirá el envió de la transacción con el binary \n"
 
 #Esto hace el deploy
@@ -140,13 +145,13 @@ curl -X POST \
   "jsonrpc": "2.0",
   "id": 1,
   "method": "$METODO",
-  "params": [{"from": "$CUENTA_DE_ORIGEN", "gas": "0x1c31e2",  "data": "$BINARY"}]
+  "params": [{"from": "$CUENTA_DE_ORIGEN", "gas": "0x5c31e2",  "data": "$BINARY"}]
 }
 EOF
 echo "-- DEPLOY: Envío de transacción con el binario  \n"
-
-HASH="0x82f15f3a96591fdc64c4e169239bbb216e2cb83198ace661d10657bcaea405c7"
-#HASH="0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b"
+#Nota: gas debe ser un valor lo suficientemente grande para suplir la estimación obtenida en el paso anterior, es decir: mayor que 0x4bc5b8
+HASH="0xb19629537374e0ac8fcd8b45a96d1b35e9b3d66f2217e25271a17ff936b92be4"
+#HASH="0x82f15f3a96591fdc64c4e169239bbb216e2cb83198ace661d10657bcaea405c7"
 METODO="eth_getTransactionReceipt"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -164,30 +169,24 @@ echo "-- Recibo de transacción con el binario  \n"
 #respuesta para este caso (CFNFT.sol) es:
 #{"jsonrpc":"2.0","id":1,"result":{"transactionHash":"0x82f15f3a96591fdc64c4e169239bbb216e2cb83198ace661d10657bcaea405c7","transactionIndex":"0x0","blockHash":"0x3ed5cc3959d6f49929f1bd551ed6905c5961c89fcb20644aaaf941c7f59f1c42","blockNumber":"0x2b","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":null,"cumulativeGasUsed":"0x1c31e2","gasUsed":"0x1c31e2","contractAddress":"0x99bba657f2bbc93c02d617f8ba121cb8fc104acf","logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","status":"0x0","effectiveGasPrice":"0x3bd9b479"}}-
 
+#segundo intento, luego de reiniciar el pc, parece que sí, que sí es bueno
+#{"jsonrpc":"2.0","id":1,"result":{"transactionHash":"0xb19629537374e0ac8fcd8b45a96d1b35e9b3d66f2217e25271a17ff936b92be4","transactionIndex":"0x0","blockHash":"0x98dbe15015b2300a8a923667ca2504882de24208bf48bb26dffd3936a1672ad8","blockNumber":"0x5","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":null,"cumulativeGasUsed":"0x4bc5b8","gasUsed":"0x4bc5b8","contractAddress":"0xdc64a140aa3e981100a9beca4e685f962f0cf6c9","logs":[{"removed":false,"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0xb19629537374e0ac8fcd8b45a96d1b35e9b3d66f2217e25271a17ff936b92be4","blockHash":"0x98dbe15015b2300a8a923667ca2504882de24208bf48bb26dffd3936a1672ad8","blockNumber":"0x5","address":"0xdc64a140aa3e981100a9beca4e685f962f0cf6c9","data":"0x","topics":["0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d","0x0000000000000000000000000000000000000000000000000000000000000000","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"]},{"removed":false,"logIndex":"0x1","transactionIndex":"0x0","transactionHash":"0xb19629537374e0ac8fcd8b45a96d1b35e9b3d66f2217e25271a17ff936b92be4","blockHash":"0x98dbe15015b2300a8a923667ca2504882de24208bf48bb26dffd3936a1672ad8","blockNumber":"0x5","address":"0xdc64a140aa3e981100a9beca4e685f962f0cf6c9","data":"0x","topics":["0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d","0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"]},{"removed":false,"logIndex":"0x2","transactionIndex":"0x0","transactionHash":"0xb19629537374e0ac8fcd8b45a96d1b35e9b3d66f2217e25271a17ff936b92be4","blockHash":"0x98dbe15015b2300a8a923667ca2504882de24208bf48bb26dffd3936a1672ad8","blockNumber":"0x5","address":"0xdc64a140aa3e981100a9beca4e685f962f0cf6c9","data":"0x","topics":["0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d","0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"]},{"removed":false,"logIndex":"0x3","transactionIndex":"0x0","transactionHash":"0xb19629537374e0ac8fcd8b45a96d1b35e9b3d66f2217e25271a17ff936b92be4","blockHash":"0x98dbe15015b2300a8a923667ca2504882de24208bf48bb26dffd3936a1672ad8","blockNumber":"0x5","address":"0xdc64a140aa3e981100a9beca4e685f962f0cf6c9","data":"0x","topics":["0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0","0x0000000000000000000000000000000000000000000000000000000000000000","0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"]}],"logsBloom":"0x00000004000000000000000000000000000000000000000000800000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000000000100000800000000000000000000000000001000400000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000200000000000000000001000002020000100002000000020000000000000000000000000000000000000000401000000000100000000000000","type":"0x2","status":"0x1","effectiveGasPrice":"0x5ba454f8"}}-- Recibo de transacción con el binario  \n
+
 #Se observa un valor no nulo para la dirección del contrato, con lo que debemos entender que existen el contrato en el ganache
 #
-#DIRECCION_DEL_CONTRATO="0x0dcd1bf9a1b36ce34237eeafef220932846bcd82"
-DIRECCION_DEL_CONTRATO="0x99bba657f2bbc93c02d617f8ba121cb8fc104acf"
+DIRECCION_DEL_CONTRACTO="0xdc64a140aa3e981100a9beca4e685f962f0cf6c9"
 #Si el resultado fuese nulo, habría que reintentar la operación pues es probable que el transacción aún no hubiera sido escrita en niigún bloque. Ya se sabe que eso es una tarea de humanos llamados mineros. Ellos pueden decidir si incorporar o no la transacción y cuando hacerlo.
-#
+#Pero me ocurre cfweb3-node-1  |   Contract deployment: <UnrecognizedContract>
+#cfweb3-node-1  |   Transaction:         0x5b3e497c32ddb9c1049b1f8891b032d73313fa74dc19773a6afa46b5347cd49e
+#cfweb3-node-1  |   From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+#cfweb3-node-1  |   Value:               0 ETH
+#cfweb3-node-1  |   Gas used:            1847778 of 1847778
+#cfweb3-node-1  |   Block #122:          0x8c88f67c91e28e0204510855c50fa648fccf4dc3e804da7566333e29a1c3a87e
+#cfweb3-node-1  | 
+#cfweb3-node-1  |   TransactionExecutionError: Transaction ran out of gas
+
 #
 
-
-CODE_ADDRESS="0x99bba657f2bbc93c02d617f8ba121cb8fc104acf"
-BLOCK_NUMBER="0x2"
-METODO="eth_getCode"
-curl -X POST \
--H "Content-Type: application/json" \
-"http://127.0.0.1:8545" \
---data @/dev/stdin<<EOF
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "$METODO",
-  "params": ["$CODE_ADDRESS", "BLOCK_NUMBER"]
-}
-EOF
-echo "-- Código existente desde la dirección, en No. de bloque \n"
 
 
 #-..........................................................................................................
@@ -237,6 +236,6 @@ curl -X POST \
     }]
 }
 EOF
-echo "-- Hora de interactuar con el contracto, o prefiera los tests en hardhat make test \n"
+echo "-- Envío cualquiera hacía la direcicón del contracto \n"
 
 echo "---------------------------------- FIN --------------------------------------------------------"

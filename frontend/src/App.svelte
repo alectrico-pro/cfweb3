@@ -2,8 +2,11 @@
   import { ethers } from "ethers";
   import { onMount } from "svelte";
   import Contract from "./CFNFT.json";
-
+  //NO BORRAR- ESTE ES EL ORIGINAL- const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B";
   const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B";
+  //const CONTRACT_ID = "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9";
+
+
   const ethereum = window.ethereum;
 
   let chain, provider, signer, contract, contractWithSigner;
@@ -94,10 +97,12 @@
     currentMinted = Number(supply);
   }
 
+  // tpic original NO BORRAR -"0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
+
   async function fetchRecentlyMinted() {
     let recentMintEvents = await contract.queryFilter({
       topics: [
-        "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
+       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
       ],
     });
 
