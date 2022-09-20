@@ -86,8 +86,6 @@ services:
     build:
       context: .
       target: frontend
-    volumes:
-      - ./worker:/root
     ports:
       - "5002:5000"
     command:
@@ -97,23 +95,42 @@ services:
       - -- host
 
 
-  #esto solo genera un par de  nuevos archivos en worker/build/out.js
-  #usar worker para usar la app
-  worker:
+  worker: &worker
+    tty: true
     build:
       context: .
       target: worker
-    volumes:
-      - ./worker/build:/usr/app/worker/build
+    ports:
+      - "8787:8787"
+
+  worker-dev:
+    <<: *worker
+    command:
+      - wrangler
+      - dev
+
+  #esto abre una IDE para preubas con sede en cloudflare
+  #escribir 
+  #https://example.com/nft/00000000001.json
+  #debe responder con un json
+  #{"name":"CFNFT #00000000001.json","description":"CFNFT #00000000001.json","image":"https://cloudflare-ipfs.com/ipfs/Qma6eRuWT27UyCZCCVNpnndzRYWqyQrX4DfdgMCsLs5u8H"}
+  #
+  worker-preview:
+    tty: true
+    <<: *worker
+    command:
+      - wrangler
+      - preview
+
+  worker-publish:
+    tty: true
+    <<: *worker
+    command:
+      - wrangler
+      - publish
 
 
 
-  #usar worker para usar la app
-  rust:
-    hostname: worker.alectrico.d
-    build:
-      context: .
-      target: rust
 
 
 
