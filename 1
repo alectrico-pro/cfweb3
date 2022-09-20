@@ -99,21 +99,26 @@ services:
 
   #esto solo genera un par de  nuevos archivos en worker/build/out.js
   #usar worker para usar la app
-  worker:
+  worker-build:
     build:
       context: .
       target: worker
     volumes:
       - ./worker/build:/usr/app/worker/build
+    command:
+      - npm
+      - run
+      - build
 
-
-
-  #usar worker para usar la app
-  rust:
-    hostname: worker.alectrico.d
+  worker:
+    hostname: worker.example.com
     build:
       context: .
       target: rust
-
-
+    working_dir: "/worker/"
+    ports:
+      - "9000:9000"
+    command:
+      - wrangler
+      - build
 

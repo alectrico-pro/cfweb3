@@ -30,5 +30,11 @@ up:
 
 .PHONY: worker
 worker:
-	docker compose up worker
+	docker run -v $(shel pwd)/worker/build:/usr/app/worker/build cfweb3_npm npm run build	
+	docker run  -e PUID=1000 -e PGID=1000 -p 8787:8787 cfweb3_rust wrangler dev
 
+npm:
+	docker compose up npm
+
+worker-build:
+	docker compose up worker-build
