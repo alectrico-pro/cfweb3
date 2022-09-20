@@ -27,3 +27,8 @@ build:
 
 up:
 	docker compose up
+
+.PHONY: worker
+worker:
+	docker compose up worker
+

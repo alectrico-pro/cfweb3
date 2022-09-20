@@ -95,3 +95,22 @@ services:
       - run 
       - dev
       - -- host
+
+
+  worker:
+    tty: true
+    hostname: worker.example.com
+    environment:
+      HOST: 0.0.0.0
+    build:
+      context: .
+      target: worker
+    volumes:
+      - ./worker/build:/usr/app/worker/build
+    ports:
+      - "9000:9000"
+    command:
+      - npm
+      - run
+      - build
+
