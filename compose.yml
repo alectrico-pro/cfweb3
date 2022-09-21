@@ -95,6 +95,8 @@ services:
       - -- host
 
 
+
+  #https://hub.docker.com/r/avatarnewyork/wrangler#using-environment-variables       
   worker: &worker
     tty: true
     build:
@@ -103,18 +105,28 @@ services:
     ports:
       - "8787:8787"
 
+
+  #http://0.0.0.0:9004/nft/1
+  #en wrangler.toml
+  #expeficar la ip y el puerto
+  #si necesita combiarlo
+  #esto debe coincidier con la línea
+  #ports del servicio
   worker-dev:
     <<: *worker
+    hostname: nft.alectrico.d
+    ports: 
+      - "9004:9004"
     command:
       - wrangler
       - dev
+      - --env=development
 
-  #esto abre una IDE para preubas con sede en cloudflare
+  #worker-preview sto abre una IDE para preubas con sede en cloudflare
   #escribir 
   #https://example.com/nft/00000000001.json
   #debe responder con un json
   #{"name":"CFNFT #00000000001.json","description":"CFNFT #00000000001.json","image":"https://cloudflare-ipfs.com/ipfs/Qma6eRuWT27UyCZCCVNpnndzRYWqyQrX4DfdgMCsLs5u8H"}
-  #
   worker-preview:
     tty: true
     <<: *worker
@@ -129,6 +141,21 @@ services:
       - wrangler
       - publish
 
+  #No de me deja ingresar comandoso como en un shell
+  #Hay que crear una config usando wrangler config
+  
+  #config path does not exist /root/.wrangler/config/default.toml.
+  worker-console:
+    tty: true
+    stdin_open: true
+    <<: *worker
+    volumes:
+     - ./worker:/usr/app/worker/
+    command:
+      - wrangler
+      - config
+      - -c wrangler.toml
+      
 
 
 

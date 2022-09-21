@@ -33,3 +33,14 @@ up:
 .PHONY: worker
 worker:
 	docker compose up worker-preview
+
+
+preview:
+	docker compose up worker-preview
+
+dev:
+	docker compose up worker-dev
+
+worker-console:
+	docker compose up worker-console
+

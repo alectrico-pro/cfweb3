@@ -1,11 +1,54 @@
+global_api = "0cedbd8ae7baab66c24fc2bb7f7f9d2c2d93d"
+api_token = "T8v409YMVPEdL-_1qMzyK-WRyYeeYzwzDtWQJTaU"
+
+zone_id = "7a664e9f6d9a9038d40f3e15529ead04"
 name = "nft"
 type = "javascript"
 compatibility_date = "2022-05-13"
-
+main= "build/output.js"
+#este es el id de la cuenta alectrico.cl
 account_id = "e9bc21da719562a3e45d77de7dd042de"
 workers_dev = true
+
+
+#esto se puede usar con el comando
+#shell wrangler dev
+[dev]
+ip="0.0.0.0"
+port="9004"
 
 [build]
 command = "npm install && npm run build"
 [build.upload]
 format = "service-worker"
+
+#esto se invoca con el comando shell
+#wrangler dev --env=development
+[env.development]
+#aquí se debe especificar los valores para acceder al almacen 
+#de claves de cloudflare 
+#ese almacen siempre está allá, así que
+#no se puede hacer dev sin estar conectado a
+#internet
+
+#este es el desposito de claves de pago_repair.alectrico.workers.dev
+#pendiente: crear deposito de keys para el worker en cloudflare
+#pensado para el dominio aelectrico.cl PERO parece que solo puedo
+#tener una cuenta en cloudflare para workers y esa erá la de alectrico.cl
+
+kv_namespaces = [
+  { preview_id = "d6b5da58cc854814a2396043c56f76bb", binding = "nft", id = "457267acdf5b4fb08d7b0331df18d7f5" }]
+
+
+#estas son las variables de ambiente cuando se 
+#usa shell
+#wrangler dev --env=development
+[env.development.vars]
+#en modoe local,s se usa la ip en [dev] y
+#y el puerto en [dev]
+#y el ENV['host_name'] en el compose.yml
+#o en otro llado para formar la url 
+#de la applicación
+#nft.alectrico.d:9004
+name="nft"
+
