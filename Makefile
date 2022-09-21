@@ -32,4 +32,4 @@ up:
 
 .PHONY: worker
 worker:
-	docker compose up worker
+	docker compose up worker-preview
