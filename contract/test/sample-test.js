@@ -1,14 +1,15 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
+
 describe("CFNFT", function () {
-  it("Should deploy", async function () {
+  xit("Should deploy", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
   });
 
-  it("Can mint", async function () {
+  xit("Can mint", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
@@ -21,7 +22,7 @@ describe("CFNFT", function () {
       .withArgs(0, wallet.address);
   });
 
-  it("Can check if a token exists", async function () {
+  xit("Can check if a token exists", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
@@ -34,7 +35,7 @@ describe("CFNFT", function () {
       .to.eq(true)
   });
 
-  it("Can get a token URI", async function () {
+  xit("Can get a token URI", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
@@ -49,7 +50,7 @@ describe("CFNFT", function () {
       .to.eq(`https://nft.examples.workers.dev/nft/${id}`)
   });
 
-  it("Can't mint if sale hasn't started", async function () {
+  xit("Can't mint if sale hasn't started", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
@@ -60,7 +61,7 @@ describe("CFNFT", function () {
     ).to.be.revertedWith("sale hasn't started")
   });
 
-  it("Non-owners can't do things", async function () {
+  xit("Non-owners can't do things", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
@@ -73,7 +74,7 @@ describe("CFNFT", function () {
     ).to.be.revertedWith("transfer caller is not owner nor approved")
   });
 
-  it("Can't mint more than 3", async function () {
+  xit("Can't mint more than 3", async function () {
     const CFNFT = await ethers.getContractFactory("CFNFT");
     const cfnft = await CFNFT.deploy();
     await cfnft.deployed();
@@ -85,7 +86,7 @@ describe("CFNFT", function () {
     ).to.be.revertedWith("exceeds 3")
   });
 
-  it("Can't mint once over limit", async function () {
+  xit("Can't mint once over limit", async function () {
     this.timeout(160000)
 
     const CFNFT = await ethers.getContractFactory("CFNFT");

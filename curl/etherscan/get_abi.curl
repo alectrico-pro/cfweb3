@@ -1,0 +1,7 @@
+#https://docs.infura.io/infura/networks/ethereum/how-to/make-requests
+INFURA_API_KEY=5707a1c75350408cb408cba40175e252
+curl -X POST \
+-H "Content-Type: application/json" \
+--data '{"jsonrpc": "2.0", "id": 1, "method": "eth_blockNumber", "params": []}' \
+"https://mainnet.infura.io/v3/$INFURA_API_KEY"
+
