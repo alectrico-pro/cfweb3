@@ -96,6 +96,8 @@ services:
     build:
       context: .
       target: frontend
+    volumes:
+      - ./docs/build:/usr/app/frontend/public/build/
     ports:
       - "5003:5000"
     command:
