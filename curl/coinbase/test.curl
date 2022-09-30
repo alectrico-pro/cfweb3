@@ -1,0 +1,41 @@
+USER="G7I7R26QN26HJL6YUVU4:WCFDMDHNIG5IQ5MYMCW34HBSHY44XO7TJLXD7TBI"
+CUENTA_COIN_BASE="0xc94770007dda54cF92009BFF0dE90c06F603a09f"
+META_MASK_WALLET="0xf9f84a5b6889273890ef18c2694eed446320aec6"
+COIN_BASE_WALLET="0xbcc90049b31e42e40cd3690fe1fac2c58b420964"
+METODO="eth_getBalance"
+
+curl https://mainnet.ethereum.coinbasecloud.net \
+-H "Content-Type: application/json" \
+--user $USER \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": ["$CUENTA_COIN_BASE", "latest"] 
+}
+EOF
+
+curl https://mainnet.ethereum.coinbasecloud.net \
+-H "Content-Type: application/json" \
+--user $USER \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": ["$COIN_BASE_WALLET", "latest"]
+}
+EOF
+
+curl https://mainnet.ethereum.coinbasecloud.net \
+-H "Content-Type: application/json" \
+--user $USER \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": ["$META_MASK_WALLET", "latest"]
+}
+EOF
