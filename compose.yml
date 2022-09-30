@@ -87,7 +87,9 @@ services:
   #-------------------------------------------------------
   #
   #---- frontend que se usa para mostrar un botón mint ---
-
+  #---- este frontend es muy complicado
+  #---- necesita primero generar un bundle en js
+  #---- el que debe interactuar con svelty
   frontend:
     tty: true
     hostname: frontend.example.com
@@ -96,8 +98,6 @@ services:
     build:
       context: .
       target: frontend
-    volumes:
-      - ./docs/build:/usr/app/frontend/public/build/
     ports:
       - "5003:5000"
     command:
