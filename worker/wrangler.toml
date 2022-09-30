@@ -36,6 +36,9 @@ format = "service-worker"
 #pensado para el dominio aelectrico.cl PERO parece que solo puedo
 #tener una cuenta en cloudflare para workers y esa erá la de alectrico.cl
 
+#Si se genera el preview_id:
+#Error: HTTP status client error (403 Forbidden) for url (https://api.cloudflare.com/client/v4/accounts/e9bc21da719562a3e45d77de7dd042de/workers/subdomain/edge-preview)
+
 kv_namespaces = [
   { preview_id = "d6b5da58cc854814a2396043c56f76bb", binding = "nft", id = "457267acdf5b4fb08d7b0331df18d7f5" }]
 

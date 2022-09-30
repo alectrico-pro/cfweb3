@@ -1,3 +1,8 @@
+token_verify:
+	curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+     -H "Authorization: Bearer yCSRvAkw9H00b45YILwXHGdgfSUlT1fabqGWFDgD" \
+     -H "Content-Type:application/json"
+
 fund:
 	docker compose up fund
 
@@ -31,10 +36,6 @@ up:
 
 
 .PHONY: worker
-worker:
-	docker compose up worker-preview
-
-
 preview:
 	docker compose up worker-preview
 
@@ -44,3 +45,15 @@ dev:
 worker-console:
 	docker compose up worker-console
 
+#para ingresar el token api
+worker-config: 
+	#ocker compose run \
+        #	-v $(shell pwd)/worker:/usr/app/worker \
+	#      	-v $(shell pwd)/worker/.wrangler/config/:/root/.wrangler/config/ \
+        #		worker wrangler config && \
+	#
+worker:
+	docker compose run \
+                -v $(shell pwd)/worker:/usr/app/worker \
+                -v $(shell pwd)/worker/.wrangler/config/:/root/.wrangler/config/ \
+		worker wrangler publish 

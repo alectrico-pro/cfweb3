@@ -21,6 +21,6 @@ FROM base as worker
 ENV PUID=1000
 ENV PGID=1000
 
+WORKDIR /usr/app
+RUN npm install -g @cloudflare/wrangler
 WORKDIR /usr/app/worker
-RUN npm i @cloudflare/wrangler -g
-RUN wrangler build
