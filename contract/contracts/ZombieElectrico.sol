@@ -8,8 +8,7 @@ import "./BatteryFactory.sol";
 //Un zombie electricos es una zombie alimentado por
 //Baterías, si no tiene baterías es peso muerto
 contract ZombieElectrico is ZombieFactory {
-  
-  
+
   function feedAndMultiply(uint _zombieId, uint _targetDna) public {
     require(msg.sender == zombieToOwner[_zombieId]);
     Zombie storage myZombie = zombies[_zombieId];

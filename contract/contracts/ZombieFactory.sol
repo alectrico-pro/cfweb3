@@ -20,6 +20,25 @@ contract ZombieFactory {
     mapping( address => uint ) ownerZombieCount;
     mapping( address => uint ) favoriteNumber;
 
+    mapping( uint => address ) public zombieToDireccion;
+    mapping( address => uint ) public direccionToZombie;
+
+    //El propietario asigna la dirección de un colaborador real
+    //A uno de sus zombies existentes
+    //De esa manera podrá hacer los cobros de comisiones más adelante
+    //Que en este caso, son baterías
+
+    function _setAddressToZombie(uint _zombieId, address direccion) public {
+       require( msg.sender == zombieToOwner[_zombieId]);
+       zombieToDireccion[ _zombieId] = direccion ;
+       direccionToZombie[ direccion ] = _zombieId ;
+    }
+
+    function crearZombieElectrico( string memory _name, address direccion ) public {
+        crearRandomZombie( _name );
+        uint id = zombies.length - 1 ;
+        _setAddressToZombie( id, direccion );
+    }
 
     function setMyNumber( uint _myNumber) public {
         favoriteNumber[ msg.sender ] = _myNumber;
@@ -27,6 +46,15 @@ contract ZombieFactory {
 
     function getMyNumber() public view returns (uint) {
         return favoriteNumber[ msg.sender];
+    }
+
+    function getZombieId( address direccion ) public view returns (uint) {
+        return direccionToZombie[ direccion];
+    }
+
+
+    function cuantosZombiesTengo() public view returns (uint) {
+        return ownerZombieCount[msg.sender];
     }
 
     function _crearZombie(string memory _name, uint _dna) internal

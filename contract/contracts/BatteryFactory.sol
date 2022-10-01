@@ -22,6 +22,10 @@ contract BatteryFactory {
     mapping( address => uint ) favoriteNumber;
 
 
+    function cuantasBateriasTengo() public view returns (uint)  {
+        return ownerBatCount[ msg.sender ];
+    }
+
     function _crearBat(string memory _name, uint _dna) internal
     {
         Bat memory bat = Bat(_name, _dna);
