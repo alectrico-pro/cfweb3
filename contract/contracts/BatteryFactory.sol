@@ -1,6 +1,8 @@
 ///Emisión de Batería de recarga
 // SPDX-License-Identifier: UNLINCESED
 pragma solidity ^0.8.0;
+import "hardhat/console.sol";
+import "./TokenBat.sol";
 
 contract BatteryFactory {
 
@@ -22,12 +24,13 @@ contract BatteryFactory {
     mapping( address => uint ) favoriteNumber;
 
 
-    function cuantasBateriasTengo() public view returns (uint)  {
+    function cuantasBateriasHay() public view returns (uint)  {
+        // console.log("En cuantasBateriasHay" );
         return ownerBatCount[ msg.sender ];
     }
 
-    function _crearBat(string memory _name, uint _dna) internal
-    {
+    function _crearBat(string memory _name, uint _dna) internal  {
+        // console.log("En _crearBat %s, dna: %s", _name, _dna);
         Bat memory bat = Bat(_name, _dna);
         bats.push(bat) ;
         uint id = bats.length - 1;
@@ -37,12 +40,13 @@ contract BatteryFactory {
     }
 
     function _generateRandomDna(string memory _str) private view returns (uint)     {
+        //console.log("En _generateRandomDna");
         uint rand = uint(keccak256(abi.encodePacked(_str)));
         return rand % dnaModulus;
     }
 
-    function crearRandomBat(string memory _name) public
-    {
+    function crearRandomBat(string memory _name) public  {
+        //console.log("En crearRandomBat");
         require( ownerBatCount[msg.sender] == 0);
         uint randDna = _generateRandomDna(_name);
         _crearBat(_name, randDna);

@@ -35,12 +35,12 @@ contract RondaFactory is ZombieElectrico {
 //Los zombies están definidos en la biblioteca zombie_factory
 
   function cuantasRondasHay() public view returns (uint) {
-     console.log("En cuantasRondasHay" );
+     //console.log("En cuantasRondasHay" );
      return rondas.length;
   }
 
   function getZombieFromRonda( uint _ronda_id ) view public returns (address) {
-     console.log("En getZombieFromRonda id: %d", _ronda_id);
+     //console.log("En getZombieFromRonda id: %d", _ronda_id);
      return rondaToZombie[ _ronda_id ];
   }
 
@@ -52,8 +52,8 @@ contract RondaFactory is ZombieElectrico {
 	string memory _descripcion,  
 	string memory _tipo) public {
 
-    console.log("En crearRonda->  nombre: %s, fono: %d", _nombre, _fono);
-    console.log("direccion: %s, comuna: %s, descripcion: %s", _direccion, _comuna, _descripcion);
+    //console.log("En crearRonda->  nombre: %s, fono: %d", _nombre, _fono);
+    //console.log("direccion: %s, comuna: %s, descripcion: %s", _direccion, _comuna, _descripcion);
     Ronda memory ronda = Ronda( _nombre, 
 	_fono, 
 	_direccion,  
@@ -78,7 +78,7 @@ contract RondaFactory is ZombieElectrico {
 	string memory _descripcion,  
 	string memory _tipo) public {
 
-   console.log("En crearRondaConEvento: llama a crearRonda y luego a _difundirRonda");
+   //console.log("En crearRondaConEvento: llama a crearRonda y luego a _difundirRonda");
    crearRonda(
 	_nombre,      
 	_fono,         
@@ -96,8 +96,8 @@ contract RondaFactory is ZombieElectrico {
   //Esta emisión debe guardarse en el almacen del worker
   //Para poder recuperar los datos, cuando un zombie quiera tomarlo
   function _difundirRonda(uint _id) private  {
-    console.log("En _difundirRonda _id: %d nombre: %s, fono: %d", _id , rondas[_id].nombre, rondas[_id].fono);
-    console.log("direccion: %s, comuna: %s, descripcion: %s", rondas[_id].direccion, rondas[_id].comuna, rondas[_id].descripcion);
+    //console.log("En _difundirRonda _id: %d nombre: %s, fono: %d", _id , rondas[_id].nombre, rondas[_id].fono);
+    //console.log("direccion: %s, comuna: %s, descripcion: %s", rondas[_id].direccion, rondas[_id].comuna, rondas[_id].descripcion);
     emit RondaNueva(_id, rondas[_id].nombre, rondas[_id].comuna, rondas[_id].descripcion, rondas[_id].tipo );
   }
 
@@ -105,7 +105,7 @@ contract RondaFactory is ZombieElectrico {
   //Esta función es iniciada por el zombie desde su whatsapp
   //Esto deberá emitiar un evento para que se pueda convertir a Whatsapp y enviar al zombie
   function asignarRondaAZombie(uint _ronda_id, address _zombie_address) public {
-    console.log("En asignarRondaAZombie _ronda_id: %d zombie address: %s", _ronda_id, _zombie_address);
+    //console.log("En asignarRondaAZombie _ronda_id: %d zombie address: %s", _ronda_id, _zombie_address);
     rondaToZombie[_ronda_id] = _zombie_address;
   }
  
