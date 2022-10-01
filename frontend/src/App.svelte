@@ -25,7 +25,9 @@
   let token_bat, token_bat_WithSigner, chain, provider, signer, contract, contractWithSigner;
 
   let maxTokens = -1;
+  let token_bat_maxTokens = -1;
   let currentMinted = -1;
+  let token_bat_currentMinted = -1;
   let account = null;
   let minted = false;
   let loading = false;
@@ -88,7 +90,7 @@
     token_bat_mintWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
       loading = false;
-      currentMinted += 1;
+      token_bat_currentMinted += 1;
     });
   }
 
@@ -123,6 +125,15 @@
 
     maxTokens = Number(total);
     currentMinted = Number(supply);
+
+
+    const token_bat_total = await token_bat.MAX_TOKENS();
+    const token_bat_supply = await token_bat.totalSupply();
+
+    token_bat_maxTokens = Number(token_bat_total);
+    token_bat_currentMinted = Number(token_bat_supply);
+
+
   }
 
   // tpic original NO BORRAR -"0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
@@ -208,6 +219,10 @@
 
       </form>
 
+      <section>
+        <span>{currentMinted}/2048 minted</span>
+      </section>
+
 
       <form on:submit|preventDefault={token_bat_mint}>
         <input
@@ -218,7 +233,7 @@
           bind:value={quantity}
         />
 
-        {#if currentMinted >= maxTokens}
+        {#if token_bat_currentMinted >= token_bat_maxTokens}
           <button disabled type="submit">Sold out</button>
         {:else}
           <button type="submit">TokenBatMint</button>
@@ -228,7 +243,7 @@
 
 
       <section>
-        <span>{currentMinted}/2048 minted</span>
+        <span>{token_bat_currentMinted}/64 minted</span>
       </section>
 
       <h2>Your Tokens:</h2>
