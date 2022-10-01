@@ -6,7 +6,7 @@ curl -X POST \
 -H "Content-Type: application/json" \
 --data '{"jsonrpc": "2.0", "id": 1, "method": "eth_blockNumber", "params": []}' \
 $CHAIN
-
+#Esta es la dirección del contrato CFNFT implementado por mi en la red rinkeby
 CFNFT_ADDRESS="0x22eB9a6d5959647B15f6C48839076735074b7f87"
 CUENTA_DE_ORIGEN="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 METODO="eth_sendTransaction"

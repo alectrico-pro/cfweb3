@@ -12,7 +12,6 @@ services:
       dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
       NODE_OPTIONS: "--openssl-legacy-provider"
       ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
-      CFNFT_RINKEBY_ADDRESS: 0x290422EC6eADc2CC12aCd98C50333720382CA86B
 
   #esto requiere conexión a internet para bajar compiladores
   #Despues de bajarlos, se ejecutan algunas tareas
@@ -41,7 +40,16 @@ services:
     #}
     #;
     volumes:
+      - ./contract/scripts:/usr/app/contract/scripts
+      - ./contract/contracts:/usr/app/contract/contracts
       - ./contract/artifacts:/usr/app/contract/artifacts
+      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
+      - ./contract/test:/usr/app/contract/test
+      #Este volumen pone los *.json en src de frontend desde donde
+      #App.sevelty lo pueda importar
+      #Importante: Para ilustar con el contrato CFNFT:
+      ## lacompilación crea una carpeta CFNFT.sol/CFNFT.json
+      - ./frontend/src:/usr/app/contract/artifacts/contracts
     command: "npx hardhat compile --force --verbose"
 
 
@@ -79,8 +87,14 @@ services:
     command: "npx hardhat run scripts/deploy.js"
 
 
-  rinkeby: &deploy
-    <<: *app
+  #Esto implementará todos mis contratos y los dejará como propiedad de la cuenta
+  #Que creé para rinkeby que está asociada al nodo público en infura
+  #Si no lo hago así, no podré operar libremente con los contratos cuando
+  #sean publicados en rinkeby
+  rinkeby: 
+    <<: *deploy
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     volumes:
       - ./contract/scripts:/usr/app/contract/scripts
       - ./contract/contracts:/usr/app/contract/contracts
@@ -123,6 +137,9 @@ services:
       target: frontend
     ports:
       - "5003:5000"
+    volumes:
+      - ./frontend/src:/usr/app/frontend/src
+      - ./frontend/src/TokenBat.sol:/usr/app/frontend/src/TokenBat.sol
     command:
       - npm
       - run 

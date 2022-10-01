@@ -1,15 +1,28 @@
 <script>
   import { ethers } from "ethers";
   import { onMount } from "svelte";
-  import Contract from "./CFNFT.json";
+  import Contract from "./CFNFT.sol/CFNFT.json";
+  import TokenBat from "./TokenBat.sol/TokenBat.json";
+
   //NO BORRAR- ESTE ES EL ORIGINAL- const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B";
   const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B";
-  //const CONTRACT_ID = "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9";
+
+  //Esta es la dirección del contracto cuyo propietario es alectrico®
+  //en rinkeby
+  const TOKEN_BAT_ID = "0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca";
+ 
+// | CFNFT deployed to: 0x695F6276F357cd98bCd26033Dc453A900FB259d7
+//
+//web3-rinkeby-1  | TokenBat deployed to: 0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca
+//web3-rinkeby-1  | ZombieFactory deployed to: 0xdA56E81a5eF2B995f1323475241091f6755704Ba
+//web3-rinkeby-1  | ZombieElectrico deployed to: 0x84FEb620813Cb2dCa4Af112df2873E826b36d888
+//web3-rinkeby-1  | RondaFactory deployed to: 0xbd3fb47b7759CBC65B98EBBE593DEE3016611cb7
+//web3-rinkeby-1  | BatteryFactory deployed to: 0xB33a9b46fE9E4F9aa7C1D09334D9336e6422F133
 
 
   const ethereum = window.ethereum;
 
-  let chain, provider, signer, contract, contractWithSigner;
+  let token_bat, token_bat_WithSigner, chain, provider, signer, contract, contractWithSigner;
 
   let maxTokens = -1;
   let currentMinted = -1;
@@ -31,6 +44,11 @@
 
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
     contractWithSigner = contract.connect(signer);
+
+
+    token_bat = new ethers.Contract(TOKEN_BAT_ID, TokenBat.abi, provider);
+    token_bat_WithSigner = token_bat.connect(signer);
+
 
     ethereum.on("accountsChanged", function (accounts) {
       account = accounts[0];
@@ -62,6 +80,16 @@
     });
     account = accounts[0];
     init();
+  }
+
+  async function token_bat_mint() {
+    await token_bat_WithSigner.mintToken(quantity, account);
+    loading = true;
+    token_bat_mintWithSigner.on("Minted", (from, to, amount, event) => {
+      minted = true;
+      loading = false;
+      currentMinted += 1;
+    });
   }
 
   async function mint() {
@@ -177,7 +205,27 @@
         {:else}
           <button type="submit">Mint</button>
         {/if}
+
       </form>
+
+
+      <form on:submit|preventDefault={token_bat_mint}>
+        <input
+          type="number"
+          min="1"
+          max="3"
+          placeholder="Quantity to mint"
+          bind:value={quantity}
+        />
+
+        {#if currentMinted >= maxTokens}
+          <button disabled type="submit">Sold out</button>
+        {:else}
+          <button type="submit">TokenBatMint</button>
+        {/if}
+
+      </form>
+
 
       <section>
         <span>{currentMinted}/2048 minted</span>
