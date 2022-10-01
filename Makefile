@@ -12,6 +12,16 @@ d:
 deploy:
 	docker compose up deploy
 
+rinkeby:
+	docker compose up rinkeby
+
+
+rdeploy:
+	docker compose up rdeploy
+
+
+
+
 node:
 	docker compose up node
 

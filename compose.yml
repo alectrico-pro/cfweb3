@@ -68,9 +68,27 @@ services:
       - "8545:8545"
     command: "npx hardhat node"
 
-  deploy:
+  deploy: &deploy
     <<: *app
+    volumes:
+      - ./contract/scripts:/usr/app/contract/scripts
+      - ./contract/contracts:/usr/app/contract/contracts
+      - ./contract/artifacts:/usr/app/contract/artifacts
+      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
+      - ./contract/test:/usr/app/contract/test
     command: "npx hardhat run scripts/deploy.js"
+
+
+  rinkeby: &deploy
+    <<: *app
+    volumes:
+      - ./contract/scripts:/usr/app/contract/scripts
+      - ./contract/contracts:/usr/app/contract/contracts
+      - ./contract/artifacts:/usr/app/contract/artifacts
+      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
+      - ./contract/test:/usr/app/contract/test
+
+    command: "npx hardhat run scripts/deploy.js --network rinkeby"
 
 
   fund:
@@ -85,8 +103,8 @@ services:
   #Tal vez es un problema de proxies y cosas así.
   #Hay que cerciorarse de que la dirección 8545:8545 esté en 
   #service node: en la key ports
-  deply:
-    <<: *app
+  rdeploy:
+    <<: *deploy
     command: "npx hardhat run scripts/deploy.js --network bocaciega"
 
   #-------------------------------------------------------

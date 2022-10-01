@@ -18,12 +18,5 @@ contract ZombieElectrico is ZombieFactory {
     _crearZombie("NoName", newDna);
   }
 
-  //El zombie consume una batería,
-  //Más bien se combina a nivel de adn con una batería
-  function feedOnBat(uint _zombieId, uint _batId) public {
-    uint batDna;
-    //batDna = bats[_batId ].dna;
-    //feedAndMultiply(_zombieId, batDna);
-  }
 
 }

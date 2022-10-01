@@ -1,0 +1,33 @@
+#https://docs.infura.io/infura/networks/ethereum/how-to/make-requests
+INFURA_API_KEY=5707a1c75350408cb408cba40175e252
+CHAIN="https://rinkeby.infura.io/v3/$INFURA_API_KEY"
+
+curl -X POST \
+-H "Content-Type: application/json" \
+--data '{"jsonrpc": "2.0", "id": 1, "method": "eth_blockNumber", "params": []}' \
+$CHAIN
+
+CFNFT_ADDRESS="0x22eB9a6d5959647B15f6C48839076735074b7f87"
+CUENTA_DE_ORIGEN="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+METODO="eth_sendTransaction"
+#BINARY ES UNA REPRESENTACION PARCIAL DE UNA DE LAS FUNCIONES DEL CONTRATO
+#EL VALOR QUE HE COLOCADO AHORA NO ES DE ESTE CONTRATO
+BINARY="0xc6888fa10000000000000000000000000000000000000000000000000000000000000006"
+
+curl -X POST \
+-H "Content-Type: application/json" \
+$CHAIN \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": [
+    {
+      "from": "$CUENTA_DE_ORIGEN",
+      "to": "$CFNFT_ADDRESS",
+      "data": "$BINARY"
+    }]
+}
+EOF
+

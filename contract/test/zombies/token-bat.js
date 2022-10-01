@@ -50,57 +50,57 @@ describe("TokenBat", function () {
       .to.eq(`https://nft.aelectrico.cl/${id}`)
   });
 
-  xit("Can't mint if sale hasn't started", async function () {
-    const CFNFT = await ethers.getContractFactory("CFNFT");
-    const cfnft = await CFNFT.deploy();
-    await cfnft.deployed();
+  it("Can't mint if sale hasn't started", async function () {
+    const TokenBat = await ethers.getContractFactory("TokenBat");
+    const token_bat = await TokenBat.deploy();
+    await token_bat.deployed();
 
     const [owner, addr1] = await ethers.getSigners();
     await expect(
-      cfnft.connect(addr1).mintToken(1, addr1.address)
+      token_bat.connect(addr1).mintToken(1, addr1.address)
     ).to.be.revertedWith("sale hasn't started")
   });
 
-  xit("Non-owners can't do things", async function () {
-    const CFNFT = await ethers.getContractFactory("CFNFT");
-    const cfnft = await CFNFT.deploy();
-    await cfnft.deployed();
-    await cfnft.startSale()
+  it("Non-owners can't do things", async function () {
+    const TokenBat = await ethers.getContractFactory("TokenBat");
+    const token_bat = await TokenBat.deploy();
+    await token_bat.deployed();
+    await token_bat.startSale()
 
     const [owner, addr1, addr2] = await ethers.getSigners();
-    cfnft.connect(addr1).mintToken(1, addr1.address)
+    token_bat.connect(addr1).mintToken(1, addr1.address)
     await expect(
-      cfnft.connect(addr2).transferFrom(addr1.address, addr2.address, 0)
+      token_bat.connect(addr2).transferFrom(addr1.address, addr2.address, 0)
     ).to.be.revertedWith("transfer caller is not owner nor approved")
   });
 
-  xit("Can't mint more than 3", async function () {
-    const CFNFT = await ethers.getContractFactory("CFNFT");
-    const cfnft = await CFNFT.deploy();
-    await cfnft.deployed();
-    await cfnft.startSale()
+  it("Can't mint more than 3", async function () {
+    const TokenBat = await ethers.getContractFactory("TokenBat");
+    const token_bat = await TokenBat.deploy();
+    await token_bat.deployed();
+    await token_bat.startSale()
 
     const [owner, addr1] = await ethers.getSigners();
     await expect(
-      cfnft.connect(addr1).mintToken(5, addr1.address)
+      token_bat.connect(addr1).mintToken(5, addr1.address)
     ).to.be.revertedWith("exceeds 3")
   });
 
-  xit("Can't mint once over limit", async function () {
+  it("Can't mint once over limit", async function () {
     this.timeout(160000)
 
-    const CFNFT = await ethers.getContractFactory("CFNFT");
-    const cfnft = await CFNFT.deploy();
-    await cfnft.deployed();
-    await cfnft.startSale()
+    const TokenBat = await ethers.getContractFactory("TokenBat");
+    const token_bat = await TokenBat.deploy();
+    await token_bat.deployed();
+    await token_bat.startSale()
 
     const [owner, addr1] = await ethers.getSigners();
-    for (let i = 0; i < 2048; i++) {
-      cfnft.connect(addr1).mintToken(1, addr1.address)
+    for (let i = 0; i < 64; i++) {
+      token_bat.connect(addr1).mintToken(1, addr1.address)
     }
 
     await expect(
-      cfnft.connect(addr1).mintToken(1, addr1.address)
+      token_bat.connect(addr1).mintToken(1, addr1.address)
     ).to.be.revertedWith("sold out")
   });
 });
