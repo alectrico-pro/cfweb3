@@ -89,7 +89,7 @@ describe("ZOMBIE", function () {
     const ronda_factory = await RONDAFACTORY.deploy();
     await ronda_factory.deployed();
 
-    const transaccion_de_ronda = await ronda_factory.crearRondaConEvento("Juana", "+56962000921","Electrico", "Los Credos 154", "No tengo luz en el departamento", "Providencia");
+    const transaccion_de_ronda = await ronda_factory.crearRondaConEvento("Juana", "+56962000921", "Los Credos 154", "Providencia", "No tengo luz en el departamento", "Electrico");
 
     const ZOMBIEFACTORY = await ethers.getContractFactory("ZombieElectrico");
     const zombie_factory = await ZOMBIEFACTORY.deploy();
