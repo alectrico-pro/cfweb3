@@ -11,7 +11,8 @@
   //Esta es la dirección del contracto cuyo propietario es alectrico®
   //en rinkeby
   // const TOKEN_BAT_ID = "0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca";
-  const TOKEN_BAT_ID = "0x26E03cbFC18595e8F06a55aacFD586BC2E5E3d6A";
+  //const TOKEN_BAT_ID = "0x26E03cbFC18595e8F06a55aacFD586BC2E5E3d6A";
+  const TOKEN_BAT_ID = "0xb371579Bddab30bfE0FC95597AAaE56eD1314af5";
 // | CFNFT deployed to: 0x695F6276F357cd98bCd26033Dc453A900FB259d7
 //
 //web3-rinkeby-1  | TokenBat deployed to: 0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca
