@@ -138,9 +138,9 @@
       const result = await response.json();
       result.id = token;
 
-      ownedTokens.push(result);
+      ownedTokenBats.push(result);
     }
-    ownedTokenBats = ownedBats;
+    ownedTokenBats = ownedTokenBats;
   }
 
 
