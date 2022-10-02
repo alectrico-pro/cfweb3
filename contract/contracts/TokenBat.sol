@@ -46,7 +46,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         ERC721PresetMinterPauserAutoId(
             "TokenBat",
             "TokenBat",
-            "https://nft.aelectrico.cl/"
+            "https://nft.alectrico.workers.dev/"
         )
     {}
 

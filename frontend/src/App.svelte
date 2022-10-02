@@ -1,4 +1,5 @@
 <script>
+
   import { ethers } from "ethers";
   import { onMount } from "svelte";
   import Contract from "./CFNFT.sol/CFNFT.json";
@@ -9,8 +10,8 @@
 
   //Esta es la dirección del contracto cuyo propietario es alectrico®
   //en rinkeby
-  const TOKEN_BAT_ID = "0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca";
- 
+  // const TOKEN_BAT_ID = "0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca";
+  const TOKEN_BAT_ID = "0x26E03cbFC18595e8F06a55aacFD586BC2E5E3d6A";
 // | CFNFT deployed to: 0x695F6276F357cd98bCd26033Dc453A900FB259d7
 //
 //web3-rinkeby-1  | TokenBat deployed to: 0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca
@@ -26,8 +27,11 @@
 
   let maxTokens = -1;
   let token_bat_maxTokens = -1;
-  let currentMinted = -1;
   let token_bat_currentMinted = -1;
+  let ownedTokenBats = [];
+
+
+  let currentMinted = -1;
   let account = null;
   let minted = false;
   let loading = false;
@@ -46,8 +50,10 @@
 
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
     contractWithSigner = contract.connect(signer);
-
-
+  }
+   
+  if (ethereum) {
+  
     token_bat = new ethers.Contract(TOKEN_BAT_ID, TokenBat.abi, provider);
     token_bat_WithSigner = token_bat.connect(signer);
 
@@ -56,12 +62,21 @@
       account = accounts[0];
     });
 
+  }
+ 
+  if (ethereum) {
+
     ethereum.on("chainChanged", function () {
       window.location.reload();
     });
 
     init();
   }
+
+  if (ethereum) {
+    init_token_bats();
+  }
+
 
   async function init() {
     if (!account && ethereum.selectedAddress) {
@@ -76,13 +91,31 @@
     }
   }
 
+
+  async function init_token_bats() {
+    if (!account && ethereum.selectedAddress) {
+      account = ethereum.selectedAddress;
+    }
+
+    if (account) {
+      findTokenBatsOwned();
+     // findCurrentTokenBatsMinted();
+    } else {
+     // fetchRecentlyTokenBatsMinted();
+    }
+  }
+
   async function login() {
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
     account = accounts[0];
     init();
+    init_token_bats();
   }
+
+
+
 
   async function token_bat_mint() {
     await token_bat_WithSigner.mintToken(quantity, account);
@@ -93,6 +126,29 @@
       token_bat_currentMinted += 1;
     });
   }
+
+  async function findTokenBatsOwned() {
+    const numberOfTokensOwned = await token_bat.balanceOf(account);
+    for (let i = 0; i < Number(numberOfTokensOwned); i++) {
+      const token = await token_bat.tokenOfOwnerByIndex(account, i);
+      const URI = await token_bat.tokenURI(token);
+      const response = await fetch(URI);
+
+      const result = await response.json();
+      result.id = token;
+
+      ownedTokens.push(result);
+    }
+    ownedTokenBats = ownedBats;
+  }
+
+
+
+
+
+
+
+
 
   async function mint() {
     await contractWithSigner.mintToken(quantity, account);
@@ -223,29 +279,6 @@
         <span>{currentMinted}/2048 minted</span>
       </section>
 
-
-      <form on:submit|preventDefault={token_bat_mint}>
-        <input
-          type="number"
-          min="1"
-          max="3"
-          placeholder="Quantity to mint"
-          bind:value={quantity}
-        />
-
-        {#if token_bat_currentMinted >= token_bat_maxTokens}
-          <button disabled type="submit">Sold out</button>
-        {:else}
-          <button type="submit">TokenBatMint</button>
-        {/if}
-
-      </form>
-
-
-      <section>
-        <span>{token_bat_currentMinted}/64 minted</span>
-      </section>
-
       <h2>Your Tokens:</h2>
       {#if ownedTokens}
         <section>
@@ -273,6 +306,59 @@
           your collection.
         </section>
       {/if}
+
+
+
+
+      <form on:submit|preventDefault={token_bat_mint}>
+        <input
+          type="number"
+          min="1"
+          max="3"
+          placeholder="Quantity to mint"
+          bind:value={quantity}
+        />
+
+        {#if token_bat_currentMinted >= token_bat_maxTokens}
+          <button disabled type="submit">Sold out</button>
+        {:else}
+          <button type="submit">TokenBatMint</button>
+        {/if}
+
+      </form>
+
+      <section>
+        <span>{token_bat_currentMinted}/64 minted</span>
+      </section>
+
+      <h2>Your TokenBats:</h2>
+      {#if ownedTokenBats}
+        <section>
+          <ul class="grid">
+            {#each ownedTokenBats as token}
+              <li>
+                <div class="grid-image">
+                  <a
+                    href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
+                  >
+                    <img src={token.image} alt={token.description} />
+                  </a>
+                </div>
+                <div class="grid-footer">
+                  <h2>{token.name}</h2>
+                  <span>{token.description}</span>
+                </div>
+              </li>
+            {/each}
+          </ul>
+        </section>
+      {:else}
+        <section>
+          You don't have any token_bats. Mint one with the button above to add it to
+          your collection.
+        </section>
+      {/if}
+
     {:else}
       <h1>👋 Welcome to Cloudflare Web3.</h1>
       <h2>Login with Metamask to mint your NFT</h2>
@@ -313,6 +399,7 @@
       > to get started.
     </p>
   {/if}
+
 </main>
 
 <footer>
