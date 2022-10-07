@@ -5,21 +5,23 @@
   import Contract from "./CFNFT.sol/CFNFT.json";
   import TokenBat from "./TokenBat.sol/TokenBat.json";
 
-  //NO BORRAR- ESTE ES EL ORIGINAL- const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B";
-  const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B";
+  //NO BORRAR- ESTE ES EL ORIGINAL- const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B"; PERO YA DEPRECÓ JUNTO CON RINKEBY DESDE 5 octubre 2022
+  //Estas direcciones son de Goerli
+  const CONTRACT_ID = "0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f";
 
   //Esta es la dirección del contracto cuyo propietario es alectrico®
   //en rinkeby
-  // const TOKEN_BAT_ID = "0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca";
-  //const TOKEN_BAT_ID = "0x26E03cbFC18595e8F06a55aacFD586BC2E5E3d6A";
-  const TOKEN_BAT_ID = "0xb371579Bddab30bfE0FC95597AAaE56eD1314af5";
-// | CFNFT deployed to: 0x695F6276F357cd98bCd26033Dc453A900FB259d7
+  const TOKEN_BAT_ID = "0xee5c4f04835A6CF895c2d7f4311aA5f0F8a54855";
+
 //
-//web3-rinkeby-1  | TokenBat deployed to: 0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca
-//web3-rinkeby-1  | ZombieFactory deployed to: 0xdA56E81a5eF2B995f1323475241091f6755704Ba
-//web3-rinkeby-1  | ZombieElectrico deployed to: 0x84FEb620813Cb2dCa4Af112df2873E826b36d888
-//web3-rinkeby-1  | RondaFactory deployed to: 0xbd3fb47b7759CBC65B98EBBE593DEE3016611cb7
-//web3-rinkeby-1  | BatteryFactory deployed to: 0xB33a9b46fE9E4F9aa7C1D09334D9336e6422F133
+//cfweb3-goerli-1  | Compiling 30 files with 0.8.4
+//cfweb3-goerli-1  | Compilation finished successfully
+//cfweb3-goerli-1  | CFNFT deployed to: 0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f
+//cfweb3-goerli-1  | TokenBat deployed to: 0xee5c4f04835A6CF895c2d7f4311aA5f0F8a54855
+//cfweb3-goerli-1  | ZombieFactory deployed to: 0xa5BD6A802dd33730db519DAb0408A90D4989Cc53
+//cfweb3-goerli-1  | ZombieElectrico deployed to: 0x695F6276F357cd98bCd26033Dc453A900FB259d7
+//cfweb3-goerli-1  | RondaFactory deployed to: 0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca
+//cfweb3-goerli-1  | BatteryFactory deployed to: 0xdA56E81a5eF2B995f1323475241091f6755704Ba
 
 
   const ethereum = window.ethereum;

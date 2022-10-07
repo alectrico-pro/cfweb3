@@ -15,6 +15,15 @@ deploy:
 rinkeby:
 	docker compose up rinkeby
 
+goerli:
+	docker compose up goerli
+
+
+
+mainnet:
+	echo "esto costará ETH"
+	docker compose up mainnet
+
 
 rdeploy:
 	docker compose up rdeploy

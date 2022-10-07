@@ -1,0 +1,83 @@
+#No está terminado
+#interactuando con el ganache local
+#owner="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+#otro="0x290422ec6eadc2cc12acd98c50333720382ca86b"
+echo "--------------------------------------------------------------------"
+echo "------------ PROBANDO acceso goerli con http, curl--------"
+CUENTA_DE_ORIGEN="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+CUENTA_FINAL="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+#/CFNFT_ADDRESS="0x22eB9a6d5959647B15f6C48839076735074b7f87"
+#OKEN_BAT_ADDRESS="0xb62e8def8B9ce6A7401B86808A84fffdFB0E23d7"
+#OMBIE_FACTORY_ADDRESS="0x3b531c63e444c34702dbbadEe226f7bE2F97669D"
+#OMBIE_ELECTRICO_ADDRESS="0x8efD69cebe8c4C4618Bc03Ea79E4171c9A472bD3"
+#ONDA_FACTORY_ADDRESS="0x867483cd21cd24414CEE5c0a13D392e3773285A4"
+#ATTERY_FACTORY_ADDRESS="0xd5eF73e9e013ea91288bE4882364572C87EDFe28"
+#CUENTA_FINAL="0x290422ec6eadc2cc12acd98c50333720382ca86b"
+
+#Contrato BatteryFactory
+BINARY=
+
+echo "--- Obtención en otro lado make -- compile (ambiente hardhat) -, del código binario del contrato: CFNFT.sol \n"
+
+#Saber cuanto me costará hacer deploy del contrato CNFNT en local ganache
+METODO="eth_estimateGas"
+curl -X POST \
+-H "Content-Type: application/json" \
+"http://127.0.0.1:845" \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": [{"from": "$CUENTA_DE_ORIGEN", "data": "$BINARY"}]
+}
+EOF
+#respuesta es:
+#{"jsonrpc":"2.0","id":1,"result":"0x1959e"}
+#0x1959e GWEI en hexadecimal
+##{"jsonrpc":"2.0","id":1,"result":"0x4bc5b8"}-
+#
+#
+#Saber cuanto me costará hacer deploy del contrato CNFNT en goerli
+ENDPOINT="https://goerli.infura.io/v3/afd9719a56c3484fbabce83eef19b22c"
+METODO="eth_estimateGas"
+curl -X POST \
+-H "Content-Type: application/json" \
+"$ENDPOINT" \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": [{"from": "$CUENTA_DE_ORIGEN", "data": "$BINARY"}]
+}
+EOF
+
+#{"jsonrpc":"2.0","id":1,"result":"0x4bc5b8"}
+#0x4bc5b8 GWEI en hexadecimal
+#4965816 GWEI en decimal
+#
+#0.004965816=ETH
+#
+#son 70.000 pesos aproximadamente
+#
+#
+#
+
+#Saber cuanto me costará hacer deploy del contrato CNFNT en mainnet
+ENDPOINT="https://mainnet.infura.io/v3/5707a1c75350408cb408cba40175e252"
+METODO="eth_estimateGas"
+curl -X POST \
+-H "Content-Type: application/json" \
+"$ENDPOINT" \
+--data @/dev/stdin<<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "$METODO",
+  "params": [{"from": "$CUENTA_DE_ORIGEN", "data": "$BINARY"}]
+}
+EOF
+
+
+

@@ -21,6 +21,10 @@ module.exports = {
       url: "https://rinkeby.infura.io/v3/5707a1c75350408cb408cba40175e252",
       accounts: [`0x${pk}`]
     },
+    goerli: {
+      url: "https://goerli.infura.io/v3/afd9719a56c3484fbabce83eef19b22c",
+      accounts: [`0x${pk}`] 
+    },
     mainnet: {
       url: "https://mainnet.infura.io/v3/5707a1c75350408cb408cba40175e252",
       accounts: [`0x${pk}`],
