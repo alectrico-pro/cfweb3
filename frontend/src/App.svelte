@@ -124,9 +124,9 @@
 
     if (account) {
       findTokenBatsOwned();
-     // findCurrentTokenBatsMinted();
+      findCurrentTokenBatsMinted();
     } else {
-     // fetchRecentlyTokenBatsMinted();
+      fetchRecentlyTokenBatsMinted();
     }
   }
 
@@ -204,30 +204,24 @@
     ownedTokens = ownedTokens;
   }
 
- //Para TokenBat y CFNFT
-  //importantes:
-  //token_bat_currentMinted
-  //token_bat_maxTokens
+  //Para CFNFT y TokenBats
   async function findCurrentMinted() {
-    const total = await contract.MAX_TOKENS();
-    const supply = await contract.totalSupply();
-
     maxTokens = Number(total);
     currentMinted = Number(supply);
-
-
     const token_bat_total = await token_bat.MAX_TOKENS();
     const token_bat_supply = await token_bat.totalSupply();
+  }
 
+  async function findCurrentTokenBatsMinted() {
+    const token_bat_total = await token_bat.MAX_TOKENS();
+    const token_bat_supply = await token_bat.totalSupply();
     maxTokenBats = Number(token_bat_total);
     currentMintedTokenBats = Number(token_bat_supply);
-
-
   }
+
 
   // tpic original NO BORRAR -"0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
 
-  //Solo CFNFT
   async function fetchRecentlyMinted() {
     let recentMintEvents = await contract.queryFilter({
       topics: [
@@ -249,6 +243,30 @@
       recentlyMintedTokens = recentlyMintedTokens;
     });
   }
+
+  async function fetchRecentlyTokenBatsMinted() {
+    let recentMintEvents = await token_bat.queryFilter({
+      topics: [
+       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
+      ],
+    });
+
+    recentMintEvents = recentMintEvents.slice(-3);
+
+    await recentMintEvents.map(async (MintEvent) => {
+      const token = MintEvent.args.tokenId;
+      const URI = await token_bat.tokenURI(token);
+      const response = await fetch(URI);
+
+      const result = await response.json();
+      result.id = token;
+
+      recentlyMintedTokenBats.push(result);
+      recentlyMintedTokenBats = recentlyMintedTokenBats;
+    });
+  }
+
+
 </script>
 
 
@@ -322,7 +340,7 @@
               <li>
                 <div class="grid-image">
                   <a
-                    href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
+                    href={`https://testnets.opensea.io/assets/0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f/${token.id}`}
                   >
                     <img src={token.image} alt={token.description} />
                   </a>
@@ -421,6 +439,30 @@
           </ul>
         </section>
       {/if}
+
+      <h2>Recently Minted Token Bats NFTs:</h2>
+      {#if recentlyMintedTokenBats}
+        <section>
+          <ul class="grid">
+            {#each recentlyMintedTokenBats as token}
+              <li>
+                <div class="grid-image">
+                  <a
+                    href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
+                  >
+                    <img src={token.image} alt={token.description} />
+                  </a>
+                </div>
+                <div class="grid-footer">
+                  <h2>{token.name}</h2>
+                  <span>{token.description}</span>
+                </div>
+              </li>
+            {/each}
+          </ul>
+        </section>
+      {/if}
+
     {/if}
   {:else}
     <h1>This app requires a Metamask wallet.</h1>
