@@ -26,61 +26,83 @@
 
   const ethereum = window.ethereum;
 
-  let token_bat, token_bat_WithSigner, chain, provider, signer, contract, contractWithSigner;
+  //variables comunes a los dos contratos CFNFT y TokenBat
+  let chain, provider, signer;
+
+  //variables del contrato CFNFT
+  let contract, contractWithSigner;
 
   let maxTokens = -1;
-  let token_bat_maxTokens = -1;
-  let token_bat_currentMinted = -1;
-  let ownedTokenBats = [];
-
-
   let currentMinted = -1;
+  let ownedTokens = [];
+  let recentlyMintedTokens = [];
+
+
+  //variables del contrato TokenBat
+  let token_bat, token_bat_WithSigner;
+
+  let maxTokenBats = -1;
+  let currentMintedTokenBats = -1;
+  let ownedTokenBats = [];
+  let recentlyMintedTokenBats = [];
+
+
   let account = null;
   let minted = false;
   let loading = false;
   let quantity = 1;
-  let ownedTokens = [];
-  let recentlyMintedTokens = [];
 
   onMount(() => {
     chain = window.ethereum.networkVersion;
   });
 
+
+
   // If Metamask is installed
+  //Codigo comun a ambos contratos
+  //Se inicia cada contrato
+  //Se genera la variable global
+  //contract para CFNFT
+  //se genera la variable global
+  //TokenBat
   if (ethereum) {
     provider = new ethers.providers.Web3Provider(ethereum);
     signer = provider.getSigner();
-
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
     contractWithSigner = contract.connect(signer);
   }
    
+
+  //Común a ambos contratos
+  //Contract es de CFNFT
+  //token_bat es de TokenBat
   if (ethereum) {
-  
     token_bat = new ethers.Contract(TOKEN_BAT_ID, TokenBat.abi, provider);
     token_bat_WithSigner = token_bat.connect(signer);
-
-
     ethereum.on("accountsChanged", function (accounts) {
       account = accounts[0];
     });
-
   }
- 
-  if (ethereum) {
 
+
+  //Común a los dos contratos
+  //Llama a init de CFNFT
+  //y a init_token_bats de TokenBat 
+  if (ethereum) {
     ethereum.on("chainChanged", function () {
       window.location.reload();
     });
 
     init();
-  }
-
-  if (ethereum) {
     init_token_bats();
   }
 
 
+
+
+  //Funciones de inicialización para ambos contratos pero
+  //en funciones separadas
+  //init de CFNFT
   async function init() {
     if (!account && ethereum.selectedAddress) {
       account = ethereum.selectedAddress;
@@ -94,7 +116,7 @@
     }
   }
 
-
+  //Init de TokenBat. Le falta.
   async function init_token_bats() {
     if (!account && ethereum.selectedAddress) {
       account = ethereum.selectedAddress;
@@ -108,6 +130,10 @@
     }
   }
 
+
+  //Función común, pero
+  //llama a init de CFNFT (init())
+  //llama a init_token_bats de token_bat
   async function login() {
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
@@ -119,16 +145,6 @@
 
 
 
-
-  async function token_bat_mint() {
-    await token_bat_WithSigner.mintToken(quantity, account);
-    loading = true;
-    token_bat_mintWithSigner.on("Minted", (from, to, amount, event) => {
-      minted = true;
-      loading = false;
-      token_bat_currentMinted += 1;
-    });
-  }
 
   async function findTokenBatsOwned() {
     const numberOfTokensOwned = await token_bat.balanceOf(account);
@@ -148,11 +164,8 @@
 
 
 
-
-
-
-
-
+  //Mint para ambos contratos pero en funciones separadas
+  //CFNFT
   async function mint() {
     await contractWithSigner.mintToken(quantity, account);
     loading = true;
@@ -162,7 +175,20 @@
       currentMinted += 1;
     });
   }
+  //TokenBat
+  async function token_bat_mint() {
+    await token_bat_WithSigner.mintToken(quantity, account);
+    loading = true;
+    token_bat_mintWithSigner.on("Minted", (from, to, amount, event) => {
+      minted = true;
+      loading = false;
+      currentMintedTokenBats += 1;
+    });
+  }
 
+
+
+  //Solo CFNFT
   async function findCurrentOwned() {
     const numberOfTokensOwned = await contract.balanceOf(account);
     for (let i = 0; i < Number(numberOfTokensOwned); i++) {
@@ -178,6 +204,10 @@
     ownedTokens = ownedTokens;
   }
 
+ //Para TokenBat y CFNFT
+  //importantes:
+  //token_bat_currentMinted
+  //token_bat_maxTokens
   async function findCurrentMinted() {
     const total = await contract.MAX_TOKENS();
     const supply = await contract.totalSupply();
@@ -189,14 +219,15 @@
     const token_bat_total = await token_bat.MAX_TOKENS();
     const token_bat_supply = await token_bat.totalSupply();
 
-    token_bat_maxTokens = Number(token_bat_total);
-    token_bat_currentMinted = Number(token_bat_supply);
+    maxTokenBats = Number(token_bat_total);
+    currentMintedTokenBats = Number(token_bat_supply);
 
 
   }
 
   // tpic original NO BORRAR -"0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
 
+  //Solo CFNFT
   async function fetchRecentlyMinted() {
     let recentMintEvents = await contract.queryFilter({
       topics: [
@@ -220,6 +251,7 @@
   }
 </script>
 
+
 <header>
   <a href="/">Cloudflare Web3</a>
   <ul>
@@ -230,13 +262,13 @@
   </ul>
 </header>
 
-{#if chain === "4"}
+{#if chain === "5"}
   <div class="warning">
-    This marketplace is connected to the Rinkeby test network.
+    This marketplace is connected to the Goerli test network.
   </div>
 {:else}
   <div class="error">
-    This application requires you to be on the Rinkeby network. Use Metamask to
+    This application requires you to be on the Goerli network. Use Metamask to
     switch networks.
   </div>
 {/if}
@@ -322,7 +354,7 @@
           bind:value={quantity}
         />
 
-        {#if token_bat_currentMinted >= token_bat_maxTokens}
+        {#if currentMintedTokenBats >= maxTokenBats}
           <button disabled type="submit">Sold out</button>
         {:else}
           <button type="submit">TokenBatMint</button>
@@ -331,7 +363,7 @@
       </form>
 
       <section>
-        <span>{token_bat_currentMinted}/64 minted</span>
+        <span>{currentMintedTokenBats}/64 minted</span>
       </section>
 
       <h2>Your TokenBats:</h2>
