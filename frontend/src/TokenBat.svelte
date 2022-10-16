@@ -1,19 +1,12 @@
 <script>
 
-  import TOKENBAT from "./TokenBat.svelte";
-
   import { ethers } from "ethers";
   import { onMount } from "svelte";
-  import Contract from "./CFNFT.sol/CFNFT.json";
-  import TokenBat from "./TokenBat.sol/TokenBat.json";
 
-  //NO BORRAR- ESTE ES EL ORIGINAL- const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B"; PERO YA DEPRECÓ JUNTO CON RINKEBY DESDE 5 octubre 2022
-  //Estas direcciones son de Goerli
-  const CONTRACT_ID = "0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f";
 
-  //Esta es la dirección del contracto cuyo propietario es alectrico®
-  //en rinkeby
-  const TOKEN_BAT_ID = "0xee5c4f04835A6CF895c2d7f4311aA5f0F8a54855";
+  import Contract from "./TokenBat.sol/TokenBat.json";
+  const CONTRACT_ID = "0xee5c4f04835A6CF895c2d7f4311aA5f0F8a54855";
+
 
 //
 //cfweb3-goerli-1  | Compiling 30 files with 0.8.4
@@ -39,16 +32,6 @@
   let ownedTokens = [];
   let recentlyMintedTokens = [];
 
-
-  //variables del contrato TokenBat
-  let token_bat, token_bat_WithSigner;
-
-  let maxTokenBats = -1;
-  let currentMintedTokenBats = -1;
-  let ownedTokenBats = [];
-  let recentlyMintedTokenBats = [];
-
-
   let account = null;
   let minted = false;
   let loading = false;
@@ -59,52 +42,13 @@
   });
 
 
-
-  // If Metamask is installed
-  //Codigo comun a ambos contratos
-  //Se inicia cada contrato
-  //Se genera la variable global
-  //contract para CFNFT
-  //se genera la variable global
-  //TokenBat
   if (ethereum) {
     provider = new ethers.providers.Web3Provider(ethereum);
     signer = provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
     contractWithSigner = contract.connect(signer);
   }
-   
-
-  //Común a ambos contratos
-  //Contract es de CFNFT
-  //token_bat es de TokenBat
-  if (ethereum) {
-    token_bat = new ethers.Contract(TOKEN_BAT_ID, TokenBat.abi, provider);
-    token_bat_WithSigner = token_bat.connect(signer);
-    ethereum.on("accountsChanged", function (accounts) {
-      account = accounts[0];
-    });
-  }
-
-
-  //Común a los dos contratos
-  //Llama a init de CFNFT
-  //y a init_token_bats de TokenBat 
-  if (ethereum) {
-    ethereum.on("chainChanged", function () {
-      window.location.reload();
-    });
-
-    init();
-    init_token_bats();
-  }
-
-
-
-
-  //Funciones de inicialización para ambos contratos pero
-  //en funciones separadas
-  //init de CFNFT
+  
   async function init() {
     if (!account && ethereum.selectedAddress) {
       account = ethereum.selectedAddress;
@@ -118,24 +62,6 @@
     }
   }
 
-  //Init de TokenBat. Le falta.
-  async function init_token_bats() {
-    if (!account && ethereum.selectedAddress) {
-      account = ethereum.selectedAddress;
-    }
-
-    if (account) {
-      findTokenBatsOwned();
-      findCurrentTokenBatsMinted();
-    } else {
-      fetchRecentlyTokenBatsMinted();
-    }
-  }
-
-
-  //Función común, pero
-  //llama a init de CFNFT (init())
-  //llama a init_token_bats de token_bat
   async function login() {
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
@@ -146,28 +72,6 @@
   }
 
 
-
-
-  async function findTokenBatsOwned() {
-    const numberOfTokensOwned = await token_bat.balanceOf(account);
-    for (let i = 0; i < Number(numberOfTokensOwned); i++) {
-      const token = await token_bat.tokenOfOwnerByIndex(account, i);
-      const URI = await token_bat.tokenURI(token);
-      const response = await fetch(URI);
-
-      const result = await response.json();
-      result.id = token;
-
-      ownedTokenBats.push(result);
-    }
-    ownedTokenBats = ownedTokenBats;
-  }
-
-
-
-
-  //Mint para ambos contratos pero en funciones separadas
-  //CFNFT
   async function mint() {
     await contractWithSigner.mintToken(quantity, account);
     loading = true;
@@ -177,20 +81,7 @@
       currentMinted += 1;
     });
   }
-  //TokenBat
-  async function token_bat_mint() {
-    await token_bat_WithSigner.mintToken(quantity, account);
-    loading = true;
-    token_bat_mintWithSigner.on("Minted", (from, to, amount, event) => {
-      minted = true;
-      loading = false;
-      currentMintedTokenBats += 1;
-    });
-  }
 
-
-
-  //Solo CFNFT
   async function findCurrentOwned() {
     const numberOfTokensOwned = await contract.balanceOf(account);
     for (let i = 0; i < Number(numberOfTokensOwned); i++) {
@@ -206,21 +97,13 @@
     ownedTokens = ownedTokens;
   }
 
-  //Para CFNFT y TokenBats
   async function findCurrentMinted() {
+    const total = await contract.MAX_TOKENS();
+    const supply = await contract.totalSupply();
     maxTokens = Number(total);
     currentMinted = Number(supply);
-    const token_bat_total = await token_bat.MAX_TOKENS();
-    const token_bat_supply = await token_bat.totalSupply();
-  }
 
-  async function findCurrentTokenBatsMinted() {
-    const token_bat_total = await token_bat.MAX_TOKENS();
-    const token_bat_supply = await token_bat.totalSupply();
-    maxTokenBats = Number(token_bat_total);
-    currentMintedTokenBats = Number(token_bat_supply);
   }
-
 
   // tpic original NO BORRAR -"0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
 
@@ -362,58 +245,6 @@
         </section>
       {/if}
 
-
-
-
-      <form on:submit|preventDefault={token_bat_mint}>
-        <input
-          type="number"
-          min="1"
-          max="3"
-          placeholder="Quantity to mint"
-          bind:value={quantity}
-        />
-
-        {#if currentMintedTokenBats >= maxTokenBats}
-          <button disabled type="submit">Sold out</button>
-        {:else}
-          <button type="submit">TokenBatMint</button>
-        {/if}
-
-      </form>
-
-      <section>
-        <span>{currentMintedTokenBats}/64 minted</span>
-      </section>
-
-      <h2>Your TokenBats:</h2>
-      {#if ownedTokenBats}
-        <section>
-          <ul class="grid">
-            {#each ownedTokenBats as token}
-              <li>
-                <div class="grid-image">
-                  <a
-                    href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
-                  >
-                    <img src={token.image} alt={token.description} />
-                  </a>
-                </div>
-                <div class="grid-footer">
-                  <h2>{token.name}</h2>
-                  <span>{token.description}</span>
-                </div>
-              </li>
-            {/each}
-          </ul>
-        </section>
-      {:else}
-        <section>
-          You don't have any token_bats. Mint one with the button above to add it to
-          your collection.
-        </section>
-      {/if}
-
     {:else}
       <h1>👋 Welcome to Cloudflare Web3.</h1>
       <h2>Login with Metamask to mint your NFT</h2>
@@ -441,32 +272,6 @@
           </ul>
         </section>
       {/if}
-
-      <TOKENBAT/>
-
-      <h2>Recently Minted Token Bats NFTs:</h2>
-      {#if recentlyMintedTokenBats}
-        <section>
-          <ul class="grid">
-            {#each recentlyMintedTokenBats as token}
-              <li>
-                <div class="grid-image">
-                  <a
-                    href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
-                  >
-                    <img src={token.image} alt={token.description} />
-                  </a>
-                </div>
-                <div class="grid-footer">
-                  <h2>{token.name}</h2>
-                  <span>{token.description}</span>
-                </div>
-              </li>
-            {/each}
-          </ul>
-        </section>
-      {/if}
-
     {/if}
   {:else}
     <h1>This app requires a Metamask wallet.</h1>

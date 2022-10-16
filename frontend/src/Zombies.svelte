@@ -1,7 +1,5 @@
 <script>
 
-  import TOKENBAT from "./TokenBat.svelte";
-
   import { ethers } from "ethers";
   import { onMount } from "svelte";
   import Contract from "./CFNFT.sol/CFNFT.json";
@@ -441,8 +439,6 @@
           </ul>
         </section>
       {/if}
-
-      <TOKENBAT/>
 
       <h2>Recently Minted Token Bats NFTs:</h2>
       {#if recentlyMintedTokenBats}
