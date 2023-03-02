@@ -1,0 +1,13 @@
+
+
+app:
+	docker compose run app
+
+compile:
+	docker compose run compile
+
+node:
+	docker compose run node -t node
+
+deploy:
+	docker exec  npx hardhat run scripts/deploy.js --verbose
