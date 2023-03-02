@@ -1,3 +1,6 @@
+volumes:
+  node_modules:
+
 
 services:
 
@@ -12,12 +15,17 @@ services:
       dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
       NODE_OPTIONS: "--openssl-legacy-provider"
       ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
-
+    volumes:
+      - node_modules:/usr/app/contract/node_modules
   #esto requiere conexión a internet para bajar compiladores
   #Despues de bajarlos, se ejecutan algunas tareas
   #
+  
+  
   compile: 
     <<: *app
+    tty: true
+    stdin_open: true
     #artifacts es importante para nosotros pues necesitamos el código binario
     #para luego hacer deploy en el ganache local
     #usando curl
@@ -45,13 +53,13 @@ services:
       - ./contract/artifacts:/usr/app/contract/artifacts
       - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
       - ./contract/test:/usr/app/contract/test
+      - node_modules:/usr/app/contract/node_modules
       #Este volumen pone los *.json en src de frontend desde donde
       #App.sevelty lo pueda importar
       #Importante: Para ilustar con el contrato CFNFT:
       ## lacompilación crea una carpeta CFNFT.sol/CFNFT.json
       - ./frontend/src:/usr/app/contract/artifacts/contracts
     command: "npx hardhat compile --force --verbose"
-
 
   #---------------------------------------------
   #

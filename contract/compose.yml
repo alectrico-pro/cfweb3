@@ -1,0 +1,27 @@
+volumes:
+  node_modules:
+
+services:
+
+  app: &app
+    tty: true
+    stdin_open: true
+    build: . 
+    environment:
+      dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+      NODE_OPTIONS: "--openssl-legacy-provider"
+      ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
+    volumes:
+      - ./scripts:/usr/app/contract/scripts
+      - ./contracts:/usr/app/contract/contracts
+      - ./artifacts:/usr/app/contract/artifacts
+      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
+      - ./test:/usr/app/contract/test
+      - ./:/usr/app/contract
+      - node_modules:/usr/app/contract/node_modules
+     
+  compile:
+    <<: *app
+    command: npx hardhat compile --verbose
+    depends_on: 
+      - app

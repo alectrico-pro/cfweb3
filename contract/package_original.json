@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.6",
-    "hardhat": "^2.12.7",
+    "hardhat": "^2.6.4",
     "hardhat-gas-reporter": "^1.0.4"
   }
 }

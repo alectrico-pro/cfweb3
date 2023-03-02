@@ -1,15 +1,20 @@
-FROM node:alpine as base
+FROM node:18-alpine as base
 ENV PUID=1000
 ENV PGID=1000
-COPY . /usr/app/
+#COPY . /usr/app/
+
 
 FROM base as contract
 ENV PUID=1000
 ENV PGID=1000
-
 WORKDIR /usr/app/contract
-RUN npm install --save-dev @nomiclabs/hardhat-waffle 'ethereum-waffle@^3.0.0' @nomiclabs/hardhat-ethers 'ethers@^5.0.0'
+COPY ./contract/package.json /usr/app/contract/package.json
 
+#RUN npm install --save-dev git
+#UN npm install --save-dev @nomiclabs/hardhat-waffle 'ethereum-waffle@^3.0.0' @nomiclabs/hardhat-ethers 'ethers@^5.0.0'
+RUN npm install
+
+RUN ls -all 
 FROM base as frontend
 ENV PUID=1000
 ENV PGID=1000
