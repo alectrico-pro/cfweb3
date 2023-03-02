@@ -8,7 +8,7 @@ services:
     stdin_open: true
     build: . 
     environment:
-      dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
       NODE_OPTIONS: "--openssl-legacy-provider"
       ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
     volumes:
@@ -31,8 +31,13 @@ services:
     <<: *app
     tty: true
     stdin_open: true
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     ports:
       - "8545:8545"
-    command: npx hardhat node 
+    command: 
+      - npx
+      - hardhat
+      - node
 
 
