@@ -217,7 +217,7 @@
 
     recentMintEvents = recentMintEvents.slice(-3);
 
-    await recentMintEvents.map(async (MintEvent) => {
+    await recentMintEvents.map(async (CFNFTMintedEvent) => {
       const token = CFNFTMintEvent.args.tokenId;
       const URI = await contract.tokenURI(token);
       const response = await fetch(URI);
