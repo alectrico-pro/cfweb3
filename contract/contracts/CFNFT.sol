@@ -40,7 +40,7 @@ contract CFNFT is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
     bool public hasSaleStarted = false;
     string baseURI;
 
-    event Minted(uint256 tokenId, address owner);
+    event CFNFTMinted(uint256 tokenId, address owner);
 
     constructor()
         ERC721PresetMinterPauserAutoId(
@@ -62,7 +62,7 @@ contract CFNFT is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         for (uint256 i = 0; i < quantity; i++) {
             uint256 mintIndex = totalSupply();
             _safeMint(receiver, mintIndex);
-            emit Minted(mintIndex, receiver);
+            emit CFNFTMinted(mintIndex, receiver);
         }
     }
 

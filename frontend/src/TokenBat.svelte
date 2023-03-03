@@ -86,7 +86,6 @@
     });
     account = accounts[0];
     init();
-    init_token_bats();
   }
 
 
@@ -96,7 +95,7 @@
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
       loading = false;
-      currentMinted += amount;
+      currentMinted += 1;
     });
   }
 

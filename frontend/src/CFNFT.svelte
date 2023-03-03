@@ -4,8 +4,8 @@
   import { onMount } from "svelte";
   import Contract from "./CFNFT.sol/CFNFT.json";
 
-  const CONTRACT_ID = "0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f";
-
+  //nst CONTRACT_ID = "0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f";
+  const CONTRACT_ID = "0x4631BCAbD6dF18D94796344963cB60d44a4136b6";
   const ethereum = window.ethereum;
 
 

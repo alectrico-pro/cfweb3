@@ -7,25 +7,8 @@
   import Contract from "./CFNFT.sol/CFNFT.json";
   import TokenBat from "./TokenBat.sol/TokenBat.json";
 
-  //NO BORRAR- ESTE ES EL ORIGINAL- const CONTRACT_ID = "0x290422EC6eADc2CC12aCd98C50333720382CA86B"; PERO YA DEPRECÓ JUNTO CON RINKEBY DESDE 5 octubre 2022
-  //Estas direcciones son de Goerli
-  const CONTRACT_ID = "0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f";
-
-  //Esta es la dirección del contracto cuyo propietario es alectrico®
-  //en rinkeby
-  const TOKEN_BAT_ID = "0xee5c4f04835A6CF895c2d7f4311aA5f0F8a54855";
-
-//
-//cfweb3-goerli-1  | Compiling 30 files with 0.8.4
-//cfweb3-goerli-1  | Compilation finished successfully
-//cfweb3-goerli-1  | CFNFT deployed to: 0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f
-//cfweb3-goerli-1  | TokenBat deployed to: 0xee5c4f04835A6CF895c2d7f4311aA5f0F8a54855
-//cfweb3-goerli-1  | ZombieFactory deployed to: 0xa5BD6A802dd33730db519DAb0408A90D4989Cc53
-//cfweb3-goerli-1  | ZombieElectrico deployed to: 0x695F6276F357cd98bCd26033Dc453A900FB259d7
-//cfweb3-goerli-1  | RondaFactory deployed to: 0xe6974c29a577c0ca1e8311c488cebb1b1c9Cf3Ca
-//cfweb3-goerli-1  | BatteryFactory deployed to: 0xdA56E81a5eF2B995f1323475241091f6755704Ba
-
-
+  const CONTRACT_ID = "0x4631BCAbD6dF18D94796344963cB60d44a4136b6";
+  const TOKEN_BAT_ID = "0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849";
   const ethereum = window.ethereum;
 
   //variables comunes a los dos contratos CFNFT y TokenBat
@@ -148,7 +131,7 @@
 
 
 
-  async function findTokenBatsOwned() {
+  async function findTokenBatsOwned(){
     const numberOfTokensOwned = await token_bat.balanceOf(account);
     for (let i = 0; i < Number(numberOfTokensOwned); i++) {
       const token = await token_bat.tokenOfOwnerByIndex(account, i);
@@ -171,7 +154,7 @@
   async function mint() {
     await contractWithSigner.mintToken(quantity, account);
     loading = true;
-    contractWithSigner.on("Minted", (from, to, amount, event) => {
+    contractWithSigner.on("CFNFTMinted", (from, to, amount, event) => {
       minted = true;
       loading = false;
       currentMinted += 1;
@@ -181,7 +164,7 @@
   async function token_bat_mint() {
     await token_bat_WithSigner.mintToken(quantity, account);
     loading = true;
-    token_bat_mintWithSigner.on("Minted", (from, to, amount, event) => {
+    token_bat_WithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
       loading = false;
       currentMintedTokenBats += 1;
@@ -208,10 +191,11 @@
 
   //Para CFNFT y TokenBats
   async function findCurrentMinted() {
+    const total = await contract.MAX_TOKENS();
+    const supply = await contract.totalSupply();
+
     maxTokens = Number(total);
     currentMinted = Number(supply);
-    const token_bat_total = await token_bat.MAX_TOKENS();
-    const token_bat_supply = await token_bat.totalSupply();
   }
 
   async function findCurrentTokenBatsMinted() {
@@ -234,7 +218,7 @@
     recentMintEvents = recentMintEvents.slice(-3);
 
     await recentMintEvents.map(async (MintEvent) => {
-      const token = MintEvent.args.tokenId;
+      const token = CFNFTMintEvent.args.tokenId;
       const URI = await contract.tokenURI(token);
       const response = await fetch(URI);
 
