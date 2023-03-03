@@ -15,7 +15,8 @@
 //BatteryFactory deployed to: 0x09635F643e140090A9A8Dcd712eD6285858ceBef
 
 
-  const CONTRACT_ID = "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9";
+  //nst CONTRACT_ID = "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9";
+  const CONTRACT_ID = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 //localhost
 //CFNFT deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
 //TokenBat deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
@@ -95,7 +96,7 @@
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
       loading = false;
-      currentMinted += 1;
+      currentMinted += amount;
     });
   }
 
@@ -182,16 +183,17 @@
   </ul>
 </header>
 
-{#if chain === "5"}
+{#if chain === "1337"}
   <div class="warning">
-    This marketplace is connected to the Goerli test network.
+    This marketplace is connected to the Local test network.
   </div>
 {:else}
   <div class="error">
-    This application requires you to be on the Goerli network. Use Metamask to
+    This application requires you to be on the Local test network. Use Metamask to
     switch networks.
   </div>
 {/if}
+
 
 <main>
   {#if ethereum}
@@ -231,7 +233,7 @@
       </form>
 
       <section>
-        <span>{currentMinted}/2048 minted</span>
+        <span>{currentMinted}/{maxTokens} minted</span>
       </section>
 
       <h2>Your Tokens:</h2>

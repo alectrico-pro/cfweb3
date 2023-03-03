@@ -1,26 +1,36 @@
-volumes:
-  node_modules:
 
+networks:
+  backend:
+
+volumes:
+  contract_node_modules:
+  frontend_node_modules:
+  node_modules:
 
 services:
 
   #-------------------------- compila contratos 
+  # hacer docker compose run app una vez para 
+  #que las dependencias se instalen en 
+  #frontend_node_modules
+  #El commando ya está en el Dockerfile
   app: &app
     tty: true
     stdin_open: true
-    build:
-      context: .
-      target: contract
+    build: ./contract
     environment:
-      dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
       NODE_OPTIONS: "--openssl-legacy-provider"
       ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
     volumes:
-      - node_modules:/usr/app/contract/node_modules
-  #esto requiere conexión a internet para bajar compiladores
-  #Despues de bajarlos, se ejecutan algunas tareas
-  #
-  
+      - ./contract/:/usr/app/contract
+      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
+      - contract_node_modules:/usr/app/contract/node_modules
+      - ./contract/artifacts:/usr/app/contract/artifacts
+      - ./root/.cache/hardhat-nodejs/compilers/:/root/.cache/hardhat-nodejs/compilers/
+      - ./frontend/src:/usr/app/contract/artifacts/contracts
+
+
   
   compile: 
     <<: *app
@@ -47,18 +57,14 @@ services:
     #}
     #}
     #;
-    volumes:
-      - ./contract/scripts:/usr/app/contract/scripts
-      - ./contract/contracts:/usr/app/contract/contracts
-      - ./contract/artifacts:/usr/app/contract/artifacts
-      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
-      - ./contract/test:/usr/app/contract/test
-      - node_modules:/usr/app/contract/node_modules
+    #volumes:
+    #  - ./contract/artifacts:/usr/app/contract/artifacts
+    #  - ./root/.cache/hardhat-nodejs/compilers/:/root/.cache/hardhat-nodejs/compilers/
+    #- ./frontend/src:/usr/app/contract/artifacts/contracts
       #Este volumen pone los *.json en src de frontend desde donde
       #App.sevelty lo pueda importar
       #Importante: Para ilustar con el contrato CFNFT:
       ## lacompilación crea una carpeta CFNFT.sol/CFNFT.json
-      - ./frontend/src:/usr/app/contract/artifacts/contracts
     command: "npx hardhat compile --force --verbose"
 
   #---------------------------------------------
@@ -78,42 +84,34 @@ services:
     <<: *app
     command: "npx hardhat console --verbose"
 
-  node:
+
+  nodo:
     <<: *app
-    ports:
-      - "8545:8545"
-    command: "npx hardhat node"
-
-  deploy: &deploy
-    <<: *app
-    volumes:
-      - ./contract/scripts:/usr/app/contract/scripts
-      - ./contract/contracts:/usr/app/contract/contracts
-      - ./contract/artifacts:/usr/app/contract/artifacts
-      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
-      - ./contract/test:/usr/app/contract/test
-    command: "npx hardhat run scripts/deploy.js"
-
-
-  #Esto implementará todos mis contratos y los dejará como propiedad de la cuenta
-  #Que creé para rinkeby que está asociada al nodo público en infura
-  #Si no lo hago así, no podré operar libremente con los contratos cuando
-  #sean publicados en rinkeby
-  #deprecado desde 5 de ocubre en infura
-  rinkeby: 
-    <<: *deploy
+    tty: true
+    stdin_open: true
+    hostname: nodo
     environment:
       dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
-    volumes:
-      - ./contract/scripts:/usr/app/contract/scripts
-      - ./contract/contracts:/usr/app/contract/contracts
-      - ./contract/artifacts:/usr/app/contract/artifacts
-      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
-      - ./contract/test:/usr/app/contract/test
+    ports:
+      - "8545:8545"
+    command:
+      - npx
+      - hardhat
+      - node
+    networks:
+      backend:
 
-    command: "npx hardhat run scripts/deploy.js --network rinkeby"
+        #deploy:
+        # docker exec  contract-nodo-1 npx hardhat run scripts/deploy.js --network localhost --verbose
 
-  #reemplaza a rinkeby
+  #debe declararse una red backend en hardhat.config.js
+  deploy: &deploy
+    <<: *app
+    command: "npx hardhat run scripts/deploy.js --network backend --verbose"
+    networks:
+      backend:
+
+   
   goerli:
     <<: *deploy
     environment:
@@ -152,41 +150,37 @@ services:
     command: "npx hardhat run scripts/fund_localhost.js"
 
 
-
-  #llamar a node en otra pantalla
-  #https://hardhat.org/hardhat-runner/docs/getting-started
-  #no funciona, dice que se rechaza la conexión
-  #Tal vez es un problema de proxies y cosas así.
-  #Hay que cerciorarse de que la dirección 8545:8545 esté en 
-  #service node: en la key ports
-  rdeploy:
-    <<: *deploy
-    command: "npx hardhat run scripts/deploy.js --network bocaciega"
-
   #-------------------------------------------------------
   #
   #---- frontend que se usa para mostrar un botón mint ---
   #---- este frontend es muy complicado
   #---- necesita primero generar un bundle en js
   #---- el que debe interactuar con svelty
+  #hacer docker compose run una vez para 
+  #que las dependencias se instalen en 
+  #frontend_node_modules
   frontend:
     tty: true
     hostname: frontend.example.com
     environment:
       HOST: 0.0.0.0 
     build:
-      context: .
+      context: ./frontend
       target: frontend
     ports:
       - "5003:5000"
     volumes:
-      - ./frontend/src:/usr/app/frontend/src
-      - ./frontend/src/TokenBat.sol:/usr/app/frontend/src/TokenBat.sol
+      - ./frontend/:/usr/app/frontend
+      - frontend_node_modules:/usr/app/node_modules
+        # ./frontend/src:/usr/app/frontend/src
+        # ./frontend/src/TokenBat.sol:/usr/app/frontend/src/TokenBat.sol
     command:
       - npm
       - run 
       - dev
       - -- host
+    networks:
+      backend:
 
 
   #------------- worker de cloudflare que gestiona la imagen del token nft

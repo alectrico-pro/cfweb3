@@ -1,2 +1,2 @@
-app:
-	docker compose run app
+frontend:
+	docker compose run frontend

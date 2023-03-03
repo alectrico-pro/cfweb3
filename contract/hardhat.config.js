@@ -14,6 +14,13 @@ module.exports = {
 	  artifacts: './artifacts',
   },
   networks: {
+    backend: {
+      url: "http://nodo:8545",
+      chainId: 1337
+    },
+    localhost: {
+      chainId: 1337
+    },
     hardhat: {
       chainId: 1337
     },

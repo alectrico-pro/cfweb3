@@ -1,6 +1,6 @@
 services:
 
-  app:
+  frontend:
     tty: true
     hostname: frontend.example.com
     environment:
