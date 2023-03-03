@@ -1,6 +1,6 @@
 <script>
 
-  import TOKENBAT from "./TokenBat.svelte";
+  //import TOKENBAT from "./TokenBat.svelte";
 
   import { ethers } from "ethers";
   import { onMount } from "svelte";
@@ -217,8 +217,8 @@
 
     recentMintEvents = recentMintEvents.slice(-3);
 
-    await recentMintEvents.map(async (CFNFTMintedEvent) => {
-      const token = CFNFTMintEvent.args.tokenId;
+    await recentMintEvents.map(async (MintEvent) => {
+      const token = MintEvent.args.tokenId;
       const URI = await contract.tokenURI(token);
       const response = await fetch(URI);
 

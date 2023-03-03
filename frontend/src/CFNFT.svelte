@@ -55,14 +55,13 @@
     });
     account = accounts[0];
     init();
-    init_token_bats();
   }
 
 
   async function mint() {
     await contractWithSigner.mintToken(quantity, account);
     loading = true;
-    contractWithSigner.on("Minted", (from, to, amount, event) => {
+    contractWithSigner.on("CFNFTMinted", (from, to, amount, event) => {
       minted = true;
       loading = false;
       currentMinted += 1;
@@ -236,8 +235,6 @@
       <h1>👋 Welcome to Cloudflare Web3.</h1>
       <h2>Login with Metamask to mint your NFT</h2>
       <button on:click={login}>Login</button>
-      <CFNFT/>
-      <TOKENBAT/>
     {/if}
   {:else}
     <h1>This app requires a Metamask wallet.</h1>
