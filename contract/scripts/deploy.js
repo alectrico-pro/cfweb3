@@ -38,7 +38,25 @@ async function main() {
   await battery_factory.deployed();
   console.log("BatteryFactory deployed to:", battery_factory.address);
 
+  const TokenCreation = await hre.ethers.getContractFactory("TokenCreation");
+  const token_creation = await TokenCreation.deploy();
+  await token_creation.deployed();
+  console.log("TokenCreation deployed to:", token_creation.address);
 
+  const SendEther= await hre.ethers.getContractFactory("SendEther");
+  const send_ether = await SendEther.deploy();
+  await send_ether.deployed();
+  console.log("SendEther deployed to:", send_ether.address);
+
+  const ReceiveEther= await hre.ethers.getContractFactory("ReceiveEther");
+  const receive_ether = await ReceiveEther.deploy();
+  await receive_ether.deployed();
+  console.log("ReceiveEther deployed to:", receive_ether.address);
+
+  const TicketSystem = await hre.ethers.getContractFactory("TicketSystem");
+  const ticket_system = await TicketSystem.deploy(100);
+  await ticket_system.deployed();
+  console.log("TicketSystem deployed to:", ticket_system.address);
 
 }
 
