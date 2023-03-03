@@ -188,4 +188,12 @@ Notas finales.
       El frontend indica sold out, porque la cuenta de Metmask no es la dueña de los contratos
       El frontend indica solud out porque no se ha implementado ningún contrato.
       Errores de la iterfaz, el conteo de los token minteados sube muy rápido        
+      Error de nonce muy alto, se ve en la pantalla del nodo. Se debe a que el nodo se vuelve a poner en servicio con un bloque en zero, pero Metmask tiene una estadística de una cuenta con bloques superiores. La solucioń consiste en usar el menú avanzado de cuentas en Metmask para resetear la cuenta.
+
+cfweb3-nodo-1  | eth_blockNumber
+cfweb3-nodo-1  | eth_getTransactionCount
+cfweb3-nodo-1  | eth_sendRawTransaction
+cfweb3-nodo-1  | 
+cfweb3-nodo-1  |   Nonce too high. Expected nonce to be 6 but got 9. Note that transactions can't be queued when automining.
+
  
