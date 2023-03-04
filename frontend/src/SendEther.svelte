@@ -60,7 +60,11 @@
 
 
   async function mint() {
-    await contractWithSigner.sendEther( account, "7000000");
+   //   send_ether.connect(other).withdrawEther( other.address,  7000000000000000, {value: 7000000000000000})
+
+    await contractWithSigner.sendEther( account,  7000000000000000, {value: 7000000000000000});
+
+    //ait contractWithSigner.withdrawEther( account, 7000000, { value: 7000000 } );
     loading = true;
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
