@@ -71,7 +71,7 @@ services:
   #
   #
   #-............... ambiente hardhat -----------
-  test:
+  antiguo_test:
     <<: *app
     volumes:
       - ./contract/contracts:/usr/app/contract/contracts
@@ -79,6 +79,15 @@ services:
       - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
       - ./contract/test:/usr/app/contract/test
     command: "npx hardhat test --verbose"
+
+  console:
+    <<: *app
+    command: "npx hardhat console --verbose"
+
+  test:
+    <<: *app
+    command: "npx hardhat test --verbose"
+
 
   console:
     <<: *app
@@ -107,12 +116,48 @@ services:
   #debe declararse una red backend en hardhat.config.js
   deploy: &deploy
     <<: *app
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     command: "npx hardhat run scripts/deploy.js --network backend --verbose"
     networks:
       backend:
+     #debe declararse una red backend en hardhat.config.js
+     
+  deploy_ticket_system: &deploy-ticket-system
+    <<: *app
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+    command: "npx hardhat run scripts/deploy_ticket_system.js --network backend --verbose"
+    networks:
+      backend:
 
-   
-  goerli:
+  deploy_send_ether: &deploy-send_ether
+    <<: *app
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+    command: "npx hardhat run scripts/deploy_send_ether.js --network backend --verbose"
+    networks:
+      backend:
+
+
+
+
+  goerli: &deploy
+    <<: *app
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+    command: "npx hardhat run scripts/deploy_token_bat.js --network goerli --verbose"
+    networks:
+      backend:
+
+  mainnet: &deploy
+    <<: *app
+    command: "npx hardhat run scripts/deploy_token_bat.js --network mainnet --verbose"
+    networks:
+      backend:
+
+
+  antiguogoerli:
     <<: *deploy
     environment:
       dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
@@ -130,7 +175,7 @@ services:
   #Que creé para rinkeby que está asociada al nodo público en infura
   #Si no lo hago así, no podré operar libremente con los contratos cuando
   #sean publicados en rinkeby
-  mainnet:
+  antiguo_mainnet:
     <<: *deploy
     environment:
       dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"

@@ -4,13 +4,13 @@
   import { onMount } from "svelte";
 
 
-  import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1";
+  import Contract from "./TicketSystem.sol/TicketSystem.json";
+  const CONTRACT_ID = "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
 
-  //variables del contrato TokenBat
+  //variables del contrato Ticketsystem
   let contract, contractWithSigner;
 
   let maxTokens = -1;
@@ -33,6 +33,8 @@
     signer = provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
     contractWithSigner = contract.connect(signer);
+    contractWithSigner.setPriceToPay(100);
+
   }
   
   async function init() {
@@ -41,8 +43,8 @@
     }
 
     if (account) {
-      findCurrentOwned();
-      findCurrentMinted();
+      //findCurrentOwned();
+     // findCurrentMinted();
     } else {
       fetchRecentlyMinted();
     }
@@ -67,6 +69,18 @@
       currentMinted += 1;
     });
   }
+
+
+  async function buy_ticket() {
+    await contractWithSigner.buyToken();
+    loading = true;
+    contractWithSigner.on("Minted", (from, to, amount, event) => {
+      minted = true;
+      loading = false;
+      currentMinted += 1;
+    });
+  }
+
 
 
   async function findCurrentOwned() {
@@ -194,16 +208,33 @@
         />
 
         {#if currentMinted >= maxTokens}
-          <button disabled type="submit">Sold out</button>
+          <button disabled type="submit">Sin Tokens</button>
         {:else}
           <button type="submit">Mint</button>
         {/if}
 
       </form>
 
-      <section>
+     <section>
         <span>{currentMinted}/{maxTokens} minted</span>
       </section>
+
+
+
+      <form on:submit|preventDefault={buy_ticket}>
+        <input
+          type="number"
+          min="1"
+          max="3"
+          placeholder="Quantity to mint"
+          bind:value={quantity}
+        />
+
+        <button type="submit">Comprar Ticket</button>
+
+      </form>
+
+
 
       <h2>Your Tokens:</h2>
       {#if ownedTokens}

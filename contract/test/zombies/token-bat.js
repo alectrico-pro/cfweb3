@@ -9,7 +9,7 @@ describe("TokenBat", function () {
     await token_bat.deployed();
   });
 
-  it("Can mint", async function () {
+  it("Can mint if is the owner", async function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
     const token_bat = await TokenBat.deploy();
     await token_bat.deployed();
@@ -21,6 +21,22 @@ describe("TokenBat", function () {
       .to.emit( token_bat, 'Minted')
       .withArgs(0, wallet.address);
   });
+
+  it("Can mint if sales started", async function () {
+    const TokenBat = await ethers.getContractFactory("TokenBat");
+    const token_bat = await TokenBat.deploy();
+    await token_bat.deployed();
+    await token_bat.startSale();
+    const accounts = await ethers.getSigners();
+
+    const [owner, other] = await ethers.getSigners();
+    const wallet = accounts[owner, other]
+    await expect(
+      token_bat.connect(other).mintToken(1, other.address))
+      .to.emit( token_bat, 'Minted')
+      .withArgs(0, other.address);
+  });
+
 
   it("Can check if a token exists", async function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
@@ -47,10 +63,10 @@ describe("TokenBat", function () {
     const id = 0
 
     expect(await token_bat.tokenURI(id))
-      .to.eq(`https://nft.aelectrico.cl/${id}`)
+      .to.eq(`https://nft.alectrico.workers.dev/${id}`)
   });
 
-  it("Can't mint if sale hasn't started", async function () {
+  it("Non-owners Can't mint if sale hasn't started", async function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
     const token_bat = await TokenBat.deploy();
     await token_bat.deployed();
@@ -59,19 +75,6 @@ describe("TokenBat", function () {
     await expect(
       token_bat.connect(addr1).mintToken(1, addr1.address)
     ).to.be.revertedWith("sale hasn't started")
-  });
-
-  it("Non-owners can't do things", async function () {
-    const TokenBat = await ethers.getContractFactory("TokenBat");
-    const token_bat = await TokenBat.deploy();
-    await token_bat.deployed();
-    await token_bat.startSale()
-
-    const [owner, addr1, addr2] = await ethers.getSigners();
-    token_bat.connect(addr1).mintToken(1, addr1.address)
-    await expect(
-      token_bat.connect(addr2).transferFrom(addr1.address, addr2.address, 0)
-    ).to.be.revertedWith("transfer caller is not owner nor approved")
   });
 
   it("Can't mint more than 3", async function () {

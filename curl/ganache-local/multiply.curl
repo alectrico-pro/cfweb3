@@ -24,6 +24,8 @@ curl -X POST \
     }]
 }
 EOF
+echo "-------------------------"
+echo "obtener recibo"
 #Los datos en este caso parace que son de un contrato
 #DATA, 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
 ##Use eth_getTransactionReceipt to get the contract address, after the transaction was mined, when you created a contract.
@@ -31,7 +33,7 @@ EOF
 #Si cambia una letra del contenido, el hash será otro. Por eso los contratos no pueden ser versionado. Solo pueden
 #enviarse a deploy cada uno por separado.
 ##0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf
-HASH="0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf"
+HASH="0x42ec274f541f1b023c3d9b1f185f99dc1c883655ab6daf9d22f8f67c7c51694f"
 METODO="eth_getTransactionReceipt"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -49,6 +51,11 @@ EOF
 #
 #Se observa la confirmación de que la transacción fue enviada desde una cuenta a otra y que se usó un bloque
 #Me gustaría saber si al llamar a blockNumeber me dice algo
+
+#esta es la respuest unos meses después
+#"jsonrpc":"2.0","id":1,"result":{"transactionHash":"0x42ec274f541f1b023c3d9b1f185f99dc1c883655ab6daf9d22f8f67c7c51694f","transactionIndex":"0x0","blockHash":"0x616df1f49dc0f2c9e4b517d78794e7a510107407279cdc1a13852b03dfe5ef8e","blockNumber":"0x78","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":"0x290422ec6eadc2cc12acd98c50333720382ca86b","cumulativeGasUsed":"0x5498","gasUsed":"0x5498","contractAddress":null,"logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x0","status":"0x1","effectiveGasPrice":"0x9184e72a000"}}##
+echo "-------------------------"
+echo "obtener número de bloque"
 curl -X POST \
 -H "Content-Type: application/json" \
 --data '{"jsonrpc": "2.0", "id": 1, "method": "eth_blockNumber", "params": [], "id":83}' \
@@ -57,6 +64,8 @@ curl -X POST \
 #{"jsonrpc":"2.0","id":83,"result":"0x4"}
 #Supongo que me dice que hay cuatro bloques. Si la transacción anterior está en el bloque 2 y hubiese 4 bloques. Suponto que hay dos bloques que no se habrían usado todavía:
 #
+echo "-------------------------"
+echo "obtener cantidad de transacciones en el último bloque"
 METODO="eth_getTransactionCount"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -80,7 +89,9 @@ EOF
 #REcordar que los hashs siempre están relacionados con el contenido en forma unívoca,
 #ASí que estos ejercicios siempren obtendrán los mismos hash si se ejecutan solo los
 #que estén aquí.
-BLOCK_HASH="0x88b01898e61bd3f29055e50b99bc49a4badcac655f5f476d977ffcb43ef7c5e4"
+echo "-------------------------"
+echo "obtener cantidad de transacciones por hash de bloque"
+BLOCK_HASH="0x616df1f49dc0f2c9e4b517d78794e7a510107407279cdc1a13852b03dfe5ef8e"
 METODO="eth_getBlockTransactionCountByHash"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -100,7 +111,9 @@ EOF
 #Esto es llamativo, pues el hash del bloque no cambia aunque se sigan
 #agregando trasnascciones
 #
-BLOCK_NUMBER="0x2"
+echo "-------------------------"
+echo "obtener número de transacciones por número de bloque"
+BLOCK_NUMBER="0x78"
 METODO="eth_getBlockTransactionCountByNumber"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -115,10 +128,15 @@ curl -X POST \
 EOF
 #respuesta es:
 #{"jsonrpc":"2.0","id":1,"result":"0x1"}
-#dice que hay una sola transacción en el bloque 2, pero ese bloque tiene un has x y al interrogar por el hash x devuevle 7 o más
+#dice que hay una sola transacción en el bloque 2, pero ese bloque tiene un hash ( x) y al interrogar por el hash x devuelve 7 o más
 #
+
+
+#echo "-------------------------"
+echo "obtener cualquier código (del contrato) por su dirección dentro del bloque"
+
 CODE_ADDRESS="000"
-BLOCK_NUMBER="0x2"
+BLOCK_NUMBER="0x78"
 METODO="eth_getCode"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -132,7 +150,10 @@ curl -X POST \
 }
 EOF
 
-TX_HASH="0x5c841d1343437b4371570256b81c9da0dfd6c55e41cb0011d7962464016755bf"
+
+echo "-------------------------"
+echo "devuelve la transacción por su hash"
+TX_HASH="0x42ec274f541f1b023c3d9b1f185f99dc1c883655ab6daf9d22f8f67c7c51694f"
 METODO="eth_getTransactionByHash"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -146,22 +167,26 @@ curl -X POST \
 }
 EOF
 
-#No estaá soportado
-CONTRACT_CODE=""
-METODO="eth_compileSolidity"
-curl -X POST \
--H "Content-Type: application/json" \
-"http://127.0.0.1:8545" \
---data @/dev/stdin<<EOF
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "$METODO",
-  "params": ["$CONTRACT_CODE"]
-}
-EOF
+echo "-------------------------"
 
-#------------------------------ 
+#No estaá soportado
+#CONTRACT_CODE=""
+#METODO="eth_compileSolidity"
+#curl -X POST \
+#-H "Content-Type: application/json" \
+#"http://127.0.0.1:8545" \
+#--data @/dev/stdin<<EOF
+#{
+#  "jsonrpc": "2.0",
+#  "id": 1,
+#  "method": "$METODO",
+#  "params": ["$CONTRACT_CODE"]
+#}
+#EOF
+
+echo "-------------------------"
+echo "Cuánto costará hacer deploy de un contrato (compilado"
+#----------------------------- 
 ## https://ethereum.org/en/developers/docs/apis/json-rpc/
 #Estoy hace deploy de un contracto que ya ha sido complidado a binary por un compilador llamado solidit
 #
@@ -201,6 +226,9 @@ EOF
 #0x1959e GWEI en hexadecimal
 #
 
+echo "-------------------------"
+echo "enviar una transacción con gas y data equivale a hacer deploy"
+
 #Esto hace el deploy
 METODO="eth_sendTransaction"
 curl -X POST \
@@ -220,7 +248,9 @@ EOF
 #
 #Se puede llamar a getTransaccionReceipt para investigar la dircción del contrato, solo para el caso en 
 #que dicho contracto hay sido realmente deployed
-HASH="0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b"
+echo "-------------------------"
+echo "obtención del recibo por su hash"
+HASH="0xe8a93e028ab5006d3ac570fee326ac8509ef4a58c4c40bd6e434e40b06f1ea83"
 METODO="eth_getTransactionReceipt"
 curl -X POST \
 -H "Content-Type: application/json" \
@@ -236,8 +266,14 @@ EOF
 #respuesta es:
 #{"transactionHash":"0x3f772f57d6093e838c7903824616c40a34b089276ef8db83e5007d2f7f2c618b","transactionIndex":"0x0","blockHash":"0x646b598a0f0339e38bc60c5a024e587b59ca3efa424c9af145a0d79c1da6ede1","blockNumber":"0xe","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":null,"cumulativeGasUsed":"0x1959e","gasUsed":"0x1959e","contractAddress":"0x0dcd1bf9a1b36ce34237eeafef220932846bcd82","logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","status":"0x1","effectiveGasPrice":"0x44d22a3b"}}
 
+#respuest unos meses depués es:
+#{"jsonrpc":"2.0","id":1,"result":{"transactionHash":"0xe8a93e028ab5006d3ac570fee326ac8509ef4a58c4c40bd6e434e40b06f1ea83","transactionIndex":"0x0","blockHash":"0x887173f3857d2249e6f859d5a1535cbcfd39bc334ac6f95f116d0f9ca290beb9","blockNumber":"0xa0","from":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","to":null,"cumulativeGasUsed":"0x1959e","gasUsed":"0x1959e","contractAddress":"0x40a42baf86fc821f972ad2ac878729063ceef403","logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","status":"0x1","effectiveGasPrice":"0x3b9aca08"}}
 #Se observa un valor no nulo para la dirección del contrato, con lo que debemos entender que existen el contrato en el ganache
-DIRECCION_DEL_CONTRATO="0x0dcd1bf9a1b36ce34237eeafef220932846bcd82"
+#
+#IRECCION_DEL_CONTRATO="0x0dcd1bf9a1b36ce34237eeafef220932846bcd82"
+
+DIRECCION_DEL_CONTRATO="0x40a42baf86fc821f972ad2ac878729063ceef403"
+
 #Si el resultado fuese nulo, habría que reintentar la operación pues es probable que el transacción aún no hubiera sido escrita en niigún bloque. Ya se sabe que eso es una tarea de humanos llamados mineros. Ellos pueden decidir si incorporar o no la transacción y cuando hacerlo.
 #
 #
@@ -266,7 +302,8 @@ MULTIPLY="0xc6888fa1"
 #int<M>: enc(X) is the big-endian two’s complement encoding of X, padded on the higher-order (left) side with 0xff for negative X and with zero > bytes for positive X such that the length is a multiple of 32 bytes.
 
 #This encodes to 0000000000000000000000000000000000000000000000000000000000000006.
-
+echo "---------------------------------------"
+echo "Interactuando con el contrato multiply"
 #Combining the function selector and the encoded argument our data will be 0xc6888fa10000000000000000000000000000000000000000000000000000000000000006.
 CUENTA_DE_ORIGEN="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 CUENTA_FINAL="0x290422ec6eadc2cc12acd98c50333720382ca86b"
@@ -288,4 +325,4 @@ curl -X POST \
 EOF
 #el resultado es:
 #{"jsonrpc":"2.0","id":1,"result":"0x0f5369f045d96128dc3f051139d5de32f1a42085cdc39aea3fb90f9abae247dc"}
-
+echo "-------------------------------------------"

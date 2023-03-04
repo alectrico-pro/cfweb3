@@ -1,4 +1,4 @@
-import App from './TokenBat.svelte';
+import App from './SendEther.svelte';
 
 const app = new App({ target: document.body });
 

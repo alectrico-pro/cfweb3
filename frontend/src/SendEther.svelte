@@ -4,8 +4,9 @@
   import { onMount } from "svelte";
 
 
-  import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1";
+  import Contract from "./SendEther.sol/SendEther.json";
+  //nst CONTRACT_ID = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
+  const CONTRACT_ID = "0x59b670e9fA9D0A427751Af201D676719a970857b";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -41,8 +42,8 @@
     }
 
     if (account) {
-      findCurrentOwned();
-      findCurrentMinted();
+      //findCurrentOwned();
+      //findCurrentMinted();
     } else {
       fetchRecentlyMinted();
     }
@@ -59,7 +60,7 @@
 
 
   async function mint() {
-    await contractWithSigner.mintToken(quantity, account, {value: "7000000000000000"});
+    await contractWithSigner.sendEther( account, "7000000");
     loading = true;
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
@@ -193,11 +194,7 @@
           bind:value={quantity}
         />
 
-        {#if currentMinted >= maxTokens}
-          <button disabled type="submit">Sold out</button>
-        {:else}
-          <button type="submit">Mint</button>
-        {/if}
+        <button type="submit">Mint</button>
 
       </form>
 

@@ -11,6 +11,7 @@ import '@openzeppelin/contracts/utils/Strings.sol';
 import './SendEther.sol';
 import './ReceiveEther.sol';
 import './TokenCreation.sol';
+import "hardhat/console.sol";
 
 
 
@@ -34,11 +35,11 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
         string telefone;
     }
 
-    constructor(uint256 _priceToPay) payable ERC721('TokenName', 'TNM'){
+    constructor(uint256 _priceToPay) payable ERC721('Chispeza', 'CHZ'){
         priceToPay = _priceToPay;
         ownerAddress = payable(msg.sender);
         contractAddress = payable(address(this));
-
+        console.log( "En constructor de TicketSystem", "priceToPay", priceToPay);
     }
 
     function setPriceToPay(uint256 _priceToPay) public onlyOwner{

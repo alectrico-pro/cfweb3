@@ -1,3 +1,5 @@
+echo "------------------------------------------"
+echo "obtención del balance de la cuenta dueña"
 cuenta="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 curl -X POST \
 -H "Content-Type: application/json" \
