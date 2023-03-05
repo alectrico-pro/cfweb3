@@ -5,7 +5,8 @@
 
 
   import Contract from "./TicketSystem.sol/TicketSystem.json";
-  const CONTRACT_ID = "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
+ //onst CONTRACT_ID = "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c";
+  const CONTRACT_ID = "0x59b670e9fa9d0a427751af201d676719a970857b";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -72,7 +73,7 @@
 
 
   async function buy_ticket() {
-    await contractWithSigner.buyToken();
+    await contractWithSigner.buyToken({value: "7000000000000000"});
     loading = true;
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;

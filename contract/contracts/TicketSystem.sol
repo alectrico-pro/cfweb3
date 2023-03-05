@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/utils/Base64.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
+
 import './SendEther.sol';
 import './ReceiveEther.sol';
 import './TokenCreation.sol';
@@ -17,18 +18,25 @@ import "hardhat/console.sol";
 
 contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendEther, ReceiveEther {
     
-    using Counters for Counters.Counter;
     using Strings for uint256;
+
+    //counters
+    using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
     Counters.Counter private _clientId;
     Counters.Counter private _clientToRedeem;
+
+    //mappings
     mapping(uint256 => uint256) public tokenSerial;
     mapping(uint256 => client) public clientData;
+
+    //publics
     uint256 public priceToPay;
     address payable public ownerAddress;
     address payable public contractAddress;
-    client private _client;
 
+    //database
+    client private _client;
     struct client {
         string fullName;
         string fisicalAddress;
@@ -53,9 +61,9 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
         _tokenIdCounter.increment();
     }
 
-    function buyToken() public {
+    function buyToken() public payable {
         address buyer = msg.sender;
-        require(sendEther(contractAddress, priceToPay), "Payment Failed, Check your balance");
+        require(sendEther(ownerAddress, priceToPay), "Payment Failed, Check your balance");
         uint256 tokenId = _tokenIdCounter.current();
         tokenSerial[tokenId] = createTokenDNA(buyer, tokenId);
         _safeMint(buyer, tokenId);

@@ -5,6 +5,15 @@ import "hardhat/console.sol";
 
 contract SendEther {
     bool lock = false;
+
+//#  ContractInterface.methods
+//      .contractmethod(parameter)
+//       .send({
+//         from: accounts[0],
+//         value : "amount in ether or wei"
+//    });
+
+
     function sendEther (address payable _to, uint256 _priceToPay) public payable returns(bool){
         require(!lock, 'Reentrancy Detected');
         lock = true;       

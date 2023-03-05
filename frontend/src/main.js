@@ -1,4 +1,4 @@
-import App from './TicketSystem.svelte';
+import App from './TokenBat.svelte';
 
 const app = new App({ target: document.body });
 

@@ -5,7 +5,7 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1";
+  const CONTRACT_ID = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -60,6 +60,17 @@
 
   async function mint() {
     await contractWithSigner.mintToken(quantity, account, {value: "7000000000000000"});
+    loading = true;
+    contractWithSigner.on("Minted", (from, to, amount, event) => {
+      minted = true;
+      loading = false;
+      currentMinted += 1;
+    });
+  }
+
+
+  async function reedem() {
+    await contractWithSigner.redeemToken(quantity, account, {value: "7000000000000000"});
     loading = true;
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
@@ -212,15 +223,14 @@
             {#each ownedTokens as token}
               <li>
                 <div class="grid-image">
-                  <a
-                    href={`https://testnets.opensea.io/assets/0xAFF1cc0473460503BcBC0e5FB57D1a9e6f7e3c6f/${token.id}`}
-                  >
-                    <img src={token.image} alt={token.description} />
-                  </a>
+                  <img src={token.image} alt={token.description} />
                 </div>
                 <div class="grid-footer">
                   <h2>{token.name}</h2>
                   <span>{token.description}</span>
+                  <form on:submit|preventDefault={redeem}>
+                    <button type="submit">Canjear</button>
+                  </form>
                 </div>
               </li>
             {/each}
@@ -228,8 +238,7 @@
         </section>
       {:else}
         <section>
-          You don't have any tokens. Mint one with the button above to add it to
-          your collection.
+          No tienes ningún tokenBAT. Compra uno con el botón Acuñar.
         </section>
       {/if}
 

@@ -9,6 +9,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./SendEther.sol";
 
 /**
  * https://github.com/maticnetwork/pos-portal/blob/master/contracts/common/ContextMixin.sol
@@ -32,7 +33,7 @@ abstract contract ContextMixin {
     }
 }
 
-contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
+contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, SendEther {
     using SafeMath for uint256;
 
     uint256 public constant MAX_TOKENS = 64;

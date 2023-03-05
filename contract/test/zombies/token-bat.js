@@ -2,12 +2,29 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 
-describe("TokenBat", function () {
+describe("TokenBat Deployment", function () {
   it("Should deploy", async function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
     const token_bat = await TokenBat.deploy();
     await token_bat.deployed();
   });
+})
+
+describe("TokenBat minting", function () {
+
+  let token_bat;
+  let owner;
+  let wallet;
+
+  beforeEach, async function (){
+    const TokenBat = await ethers.getContractFactory("TokenBat");
+    const token_bat = await TokenBat.deploy();
+    await token_bat.deployed();
+
+    const [owner, other] = await ethers.getSigners();
+    const wallet = [owner, other ]
+
+  }
 
   it("Can mint if is the owner", async function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
@@ -106,4 +123,6 @@ describe("TokenBat", function () {
       token_bat.connect(addr1).mintToken(1, addr1.address)
     ).to.be.revertedWith("sold out")
   });
+
+
 });
