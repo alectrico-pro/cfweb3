@@ -54,9 +54,10 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
             "https://nft.alectrico.workers.dev/"
         )
         
-    {}
+    { }
 
     function setPriceToMint(uint256 _priceToMint) public onlyOwner  {
+       require(msg.sender == owner(), "only owner can set price to mit");
        require(_priceToMint > 0, 'price positive pls' );
        priceToMint = _priceToMint;
     }

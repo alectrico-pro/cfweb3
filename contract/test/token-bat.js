@@ -72,6 +72,7 @@ describe("TokenBat accounting rules", function () {
     max_tokens     = await token_bat.MAX_TOKENS(); });;
 
 
+
   it("Should revert minting token when no pay", async function () {
      await expect( token_bat.mintToken(1, owner.address ))
                   .to.be.revertedWith('pay to mint') });
@@ -81,15 +82,29 @@ describe("TokenBat accounting rules", function () {
      await expect(  token_bat.mintToken(1, owner.address, { value: "2001"} ))
                   .to.be.revertedWith('pay to mint') });
 
+
   it("Granting Equality of inventorie with the right price", async function () { 	
-     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
-                  .to.not.changeEtherBalance(token_bat,"2000" )
-                  .and.to.not.changeEtherBalance( owner,"-2000" )
-                  .and.to.not.changeTokenBalance( token_bat, owner, 1); })
+      expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+                  .to.changeEtherBalance(token_bat,"2000" )
+                  .and.to.changeEtherBalance( owner,"-2000" )
+                  .and.to.changeTokenBalance( token_bat, owner, 1); })
+
 
   it("Protecting the minting by setting the price", async function () {
-     await expect( token_bat.setPriceToMint( "2000")).to.not.be.reverted;
-  })
+     await expect( token_bat.setPriceToMint( "2000")).to.not.be.reverted;  })
+
+  it("Minting shoudn't be free of costs", async function () {
+     await expect( token_bat.setPriceToMint( "0")).to.be.reverted;  })
+
+
+  it("Only the Owner cant set the price to Mint", async function () {
+     await expect( token_bat.connect(owner).setPriceToMint( "2000")).to.not.be.reverted;  })
+
+  it("Others can't set the price to Mint", async function () {
+     await expect( token_bat.connect(other).setPriceToMint( "2000")).to.be.reverted;  })
+
+  it("Can set the price to Mint when nobdy is connected", async function () {
+     await expect( token_bat.setPriceToMint( "2000")).to.not.be.reverted;  })
 
 
 });
