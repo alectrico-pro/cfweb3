@@ -10,6 +10,7 @@ describe("TokenBat Deployment", function () {
   });
 })
 
+
 describe("TokenBat Redeeming", function () {
 
   let token_bat;
@@ -46,11 +47,13 @@ describe("TokenBat Redeeming", function () {
 
 //ttps://hardhat.org/hardhat-chai-matchers/docs/overview
 describe("TokenBat accounting rules", function () {
+
   let token_bat;
   let owner;
   let other;
   let wallet;
   let max_tokens;
+
   beforeEach( async function (){
     //TokenBats are being deployed to a chain once        
     const TokenBat = await ethers.getContractFactory("TokenBat");
@@ -78,12 +81,15 @@ describe("TokenBat accounting rules", function () {
      await expect(  token_bat.mintToken(1, owner.address, { value: "2001"} ))
                   .to.be.revertedWith('pay to mint') });
 
-  it("Can get Eality of inventorie when right price was payed", async function () { 	
+  it("Granting Equality of inventorie with the right price", async function () { 	
      expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
                   .to.not.changeEtherBalance(token_bat,"2000" )
                   .and.to.not.changeEtherBalance( owner,"-2000" )
                   .and.to.not.changeTokenBalance( token_bat, owner, 1); })
 
+  it("Protecting the minting by setting the price", async function () {
+     await expect( token_bat.setPriceToMint( "2000")).to.not.be.reverted;
+  })
 
 
 });
