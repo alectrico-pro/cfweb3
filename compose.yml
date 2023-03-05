@@ -6,6 +6,7 @@ volumes:
   contract_node_modules:
   frontend_node_modules:
   node_modules:
+  root:
 
 services:
 
@@ -26,6 +27,7 @@ services:
       - ./contract/:/usr/app/contract
       - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
       - contract_node_modules:/usr/app/contract/node_modules
+      - root:/usr/app/root
       - ./contract/artifacts:/usr/app/contract/artifacts
       - ./root/.cache/hardhat-nodejs/compilers/:/root/.cache/hardhat-nodejs/compilers/
       - ./frontend/src:/usr/app/contract/artifacts/contracts

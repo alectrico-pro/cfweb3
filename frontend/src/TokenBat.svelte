@@ -5,8 +5,8 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
+  const CONTRACT_ID= "0x5fbdb2315678afecb367f032d93f642f64180aa3";
 
-  const CONTRACT_ID = "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -25,6 +25,7 @@
   let quantity = 1;
 
   let redeemed = false;
+
 
   onMount(() => {
     chain = window.ethereum.networkVersion;
@@ -64,14 +65,16 @@
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
       loading = false;
+      findCurrentOwned();
       currentMinted += 1;
     });
   }
 
 
   async function redeem(token_id) {
-    await contractWithSigner.redeemToken(token_id, account);
+    await contractWithSigner.redeemToken(token_id);
     loading = true;
+    ownedTokens.pop(token_id);
     contractWithSigner.on("Redeemed", (from, to, amount, event) => {
       redeemed = true;
       loading = false;
@@ -81,14 +84,14 @@
 
 
   async function findCurrentOwned() {
+
     const numberOfTokensOwned = await contract.balanceOf(account);
     for (let i = 0; i < Number(numberOfTokensOwned); i++) {
-      const token = await contract.tokenOfOwnerByIndex(account, i);
-      const URI = await contract.tokenURI(token);
+      const token    = await contract.tokenOfOwnerByIndex(account, i);
+      const URI      = await contract.tokenURI(token);
       const response = await fetch(URI);
-
-      const result = await response.json();
-      result.id = token;
+      const result   = await response.json();
+      result.id      = token;
 
       ownedTokens.push(result);
     }
@@ -126,29 +129,6 @@
       recentlyMintedTokens = recentlyMintedTokens;
     });
   }
-
-  async function fetchRecentlyTokenBatsMinted() {
-    let recentMintEvents = await token_bat.queryFilter({
-      topics: [
-       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
-      ],
-    });
-
-    recentMintEvents = recentMintEvents.slice(-3);
-
-    await recentMintEvents.map(async (MintEvent) => {
-      const token = MintEvent.args.tokenId;
-      const URI = await token_bat.tokenURI(token);
-      const response = await fetch(URI);
-
-      const result = await response.json();
-      result.id = token;
-
-      recentlyMintedTokenBats.push(result);
-      recentlyMintedTokenBats = recentlyMintedTokenBats;
-    });
-  }
-
 
 </script>
 
