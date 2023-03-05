@@ -7,15 +7,9 @@ nodo:
 compile:
 	docker compose run compile
 
-deploy:
-	docker compose run deploy
 
-
-deploy_ticket_system:
-	docker compose run deploy_ticket_system
-
-deploy_send_ether:
-	docker compose run deploy_send_ether
+deploy:	
+	docker compose run deploy_token_bat
 
 
 test:

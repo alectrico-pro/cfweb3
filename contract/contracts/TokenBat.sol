@@ -81,6 +81,9 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
 
     function redeemToken(uint256 _tokenId, address receiver) public {
+        console.log("En redeemToken");
+        console.log("Token_id");
+        console.log(_tokenId);
         emit Redeemed(_tokenId, receiver);
     }
 

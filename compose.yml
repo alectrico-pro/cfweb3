@@ -122,7 +122,18 @@ services:
     networks:
       backend:
      #debe declararse una red backend en hardhat.config.js
-     
+    
+  #debe declararse una red backend en hardhat.config.js
+  deploy_token_bat: &deploy_token_bat
+    <<: *app
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+    command: "npx hardhat run scripts/deploy_token_bat.js --network backend --verbose"
+    networks:
+      backend:
+     #debe declararse una red backend en hardhat.config.js
+
+
   deploy_ticket_system: &deploy-ticket-system
     <<: *app
     environment:

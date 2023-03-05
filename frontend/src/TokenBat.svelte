@@ -5,7 +5,8 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E";
+
+  const CONTRACT_ID = "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -23,10 +24,11 @@
   let loading = false;
   let quantity = 1;
 
+  let redeemed = false;
+
   onMount(() => {
     chain = window.ethereum.networkVersion;
   });
-
 
   if (ethereum) {
     provider = new ethers.providers.Web3Provider(ethereum);
@@ -56,8 +58,6 @@
     init();
   }
 
-
-
   async function mint() {
     await contractWithSigner.mintToken(quantity, account, {value: "7000000000000000"});
     loading = true;
@@ -69,13 +69,13 @@
   }
 
 
-  async function reedem() {
-    await contractWithSigner.redeemToken(quantity, account, {value: "7000000000000000"});
+  async function redeem(token_id) {
+    await contractWithSigner.redeemToken(token_id, account);
     loading = true;
-    contractWithSigner.on("Minted", (from, to, amount, event) => {
-      minted = true;
+    contractWithSigner.on("Redeemed", (from, to, amount, event) => {
+      redeemed = true;
       loading = false;
-      currentMinted += 1;
+      currentMinted -= 1;
     });
   }
 
@@ -227,9 +227,10 @@
                 </div>
                 <div class="grid-footer">
                   <h2>{token.name}</h2>
+                  <h2>{token.id} </h2>
                   <span>{token.description}</span>
-                  <form on:submit|preventDefault={redeem}>
-                    <button type="submit">Canjear</button>
+                  <form on:submit|preventDefault={redeem(token.id)}>
+                    <button type="submit">Redeem</button>
                   </form>
                 </div>
               </li>

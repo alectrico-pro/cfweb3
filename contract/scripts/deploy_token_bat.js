@@ -10,6 +10,8 @@ async function main() {
   const token_bat = await TokenBat.deploy();
   await token_bat.deployed();
   console.log("TokenBat deployed to:", token_bat.address);
+  await token_bat.setPriceToMint(7000000000000000);
+  console.log("Price set to 7000000000000000 wei");
 }
 
 main()
