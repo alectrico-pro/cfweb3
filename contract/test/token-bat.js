@@ -66,12 +66,25 @@ describe("TokenBat accounting rules", function () {
     //value over time
     max_tokens     = await token_bat.MAX_TOKENS(); });;
 
-  it("Equality of inventorie rules all", async function () {
-   await expect(() => token_bat.mintToken(1, owner.address)).to.changeTokenBalance(
-      token_bat,
-      owner,
-      1
-   )});
+
+  it("Equality of inventorie: money in => token out ", async function () {
+
+   await expect( () => token_bat.mintToken(1, owner.address, { value: "2000"} ) )
+                  .to.changeEtherBalance( 
+			  token_bat, 
+			  "2000" );
+
+   await expect( () => token_bat.mintToken(1, owner.address, { value: "2000"} ))
+                  .to.changeEtherBalance( 
+                          owner, 
+                          "-2000" );
+   
+   await expect(() => token_bat.mintToken(1, owner.address, { value: "2000" } ))
+		  .to.changeTokenBalance(
+			  token_bat,
+			  owner, 
+			  1);
+  })
 
 });
 
