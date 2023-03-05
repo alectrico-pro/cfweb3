@@ -34,6 +34,7 @@ abstract contract ContextMixin {
 }
 
 contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, SendEther {
+
     using SafeMath for uint256;
 
     uint256 public constant MAX_TOKENS = 64;
@@ -42,6 +43,8 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, Send
     string baseURI;
 
     event Minted(uint256 tokenId, address owner);
+    event Redeemed(uint256 tokenId, address owner);
+
 
     constructor()
         ERC721PresetMinterPauserAutoId(
@@ -66,6 +69,12 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, Send
             emit Minted(mintIndex, receiver);
         }
     }
+
+
+    function redeemToken(uint256 _tokenId, address receiver) public {
+        emit Redeemed(_tokenId, receiver);
+    }
+
 
     function startSale() public onlyOwner {
         hasSaleStarted = true;
