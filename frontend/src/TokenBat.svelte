@@ -5,8 +5,7 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID= "0x5fbdb2315678afecb367f032d93f642f64180aa3";
-
+  const CONTRACT_ID= "0x610178dA211FEF7D417bC0e6FeD39F05609AD788";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -61,24 +60,28 @@
 
   async function mint() {
     await contractWithSigner.mintToken(quantity, account, {value: "7000000000000000"});
+    redeemed = false;
     loading = true;
     contractWithSigner.on("Minted", (from, to, amount, event) => {
       minted = true;
+      redeemed = false;
       loading = false;
-      findCurrentOwned();
       currentMinted += 1;
+      ownedTokens = ownedTokens;
     });
   }
 
 
   async function redeem(token_id) {
     await contractWithSigner.redeemToken(token_id);
+    minted = false;
     loading = true;
     ownedTokens.pop(token_id);
     contractWithSigner.on("Redeemed", (from, to, amount, event) => {
       redeemed = true;
       loading = false;
       currentMinted -= 1;
+      ownedTokens = ownedTokens;
     });
   }
 
@@ -111,7 +114,7 @@
   async function fetchRecentlyMinted() {
     let recentMintEvents = await contract.queryFilter({
       topics: [
-       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
+       "1",
       ],
     });
 
@@ -167,6 +170,16 @@
         <p>
           You minted an NFT! If you haven't already, add a new asset to Metamask
           using the below info
+        </p>
+        <ul>
+          <li>Contract address: {CONTRACT_ID}</li>
+          <li>Token symbol: TokenBat</li>
+          <li>Token decimal: 0</li>
+        </ul>
+      {/if}
+      {#if redeemed}
+        <p>
+          You redeemed an NFT! 
         </p>
         <ul>
           <li>Contract address: {CONTRACT_ID}</li>
@@ -233,7 +246,7 @@
         <section>
           <ul class="grid">
             {#each recentlyMintedTokens as token}
-              <li>
+              <li id ={token.id}>
                 <div class="grid-image">
                   <a
                     href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
