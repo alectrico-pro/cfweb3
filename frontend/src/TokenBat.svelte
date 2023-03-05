@@ -6,7 +6,7 @@
 
   import Contract from "./TokenBat.sol/TokenBat.json";
 
-  const CONTRACT_ID = "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690";
+  const CONTRACT_ID = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
