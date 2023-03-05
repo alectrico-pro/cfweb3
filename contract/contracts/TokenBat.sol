@@ -38,6 +38,9 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, Send
     using SafeMath for uint256;
 
     uint256 public constant MAX_TOKENS = 64;
+    uint256 public debe;
+    uint256 public haber;
+    uint256 public priceToPay;
 
     bool public hasSaleStarted = false;
     string baseURI;
@@ -52,6 +55,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, Send
             "TokenBat",
             "https://nft.alectrico.workers.dev/"
         )
+        
     {}
 
     function mintToken(uint256 quantity, address receiver) public payable {

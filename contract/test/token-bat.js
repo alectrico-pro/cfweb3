@@ -10,7 +10,7 @@ describe("TokenBat Deployment", function () {
   });
 })
 
-describe("TokenBat redeeming", function () {
+describe("TokenBat Redeeming", function () {
 
   let token_bat;
   let owner;
@@ -38,45 +38,41 @@ describe("TokenBat redeeming", function () {
     max_tokens     = await token_bat.MAX_TOKENS(); });;
 
   //When user press Canjear in the Frontend
-  it("Can buyt if is the owner", async function () {
+  it("Can Redeem if is the owner", async function () {
     expect( token_bat.redeemToken(1, owner.address))
       .to.emit( token_bat, 'Redeemed')
-      .withArgs(0, owner.address);  });
+      .withArgs(1, owner.address);  });
 });
 
-
+//ttps://hardhat.org/hardhat-chai-matchers/docs/overview
 describe("TokenBat accounting rules", function () {
-
   let token_bat;
   let owner;
   let other;
   let wallet;
   let max_tokens;
-
   beforeEach( async function (){
-
     //TokenBats are being deployed to a chain once        
     const TokenBat = await ethers.getContractFactory("TokenBat");
     token_bat      = await TokenBat.deploy();
     await token_bat.deployed();
-
     //accounts are provided by Metmask to frontend
     const accounts = await ethers.getSigners();
     owner          = accounts[0]
     other          = accounts[1]
     wallet         = accounts[owner, other];
-
-
     //max_tokens is an important feature that allow
     //scarcy effect on token, so they can increase
     //value over time
     max_tokens     = await token_bat.MAX_TOKENS(); });;
 
-  //When user press Comprar in the Frontend
-  it("Can buyt if is the owner", async function () {
-    expect( token_bat.mintToken(1, owner.address))
-      .to.emit( token_bat, 'Minted')
-      .withArgs(0, owner.address);  });
+  it("Equality of inventorie rules all", async function () {
+   await expect(() => token_bat.mintToken(1, owner.address)).to.changeTokenBalance(
+      token_bat,
+      owner,
+      1
+   )});
+
 });
 
 
