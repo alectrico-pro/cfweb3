@@ -103,6 +103,7 @@ describe("TokenBat minting", function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
     token_bat      = await TokenBat.deploy();
     await token_bat.deployed();
+    await token_bat.setPriceToMint( "2000");
 
     //accounts are provided by Metmask to frontend
     const accounts = await ethers.getSigners();
@@ -119,7 +120,7 @@ describe("TokenBat minting", function () {
 
   //When user press Mint on Frontend
   it("Can mint if is the owner", async function () {
-    expect( token_bat.mintToken(1, owner.address))
+    expect( token_bat.mintToken(1, owner.address, {value: "2000"}))
       .to.emit( token_bat, 'Minted')
       .withArgs(0, owner.address);  });
 
@@ -127,19 +128,19 @@ describe("TokenBat minting", function () {
   it("Can mint if sales started", async function () {
     await token_bat.startSale();
     await expect(
-      token_bat.connect(other).mintToken(1, other.address))
+      token_bat.connect(other).mintToken(1, other.address, {value: "2000"}))
       .to.emit( token_bat, 'Minted')
       .withArgs(0, other.address);  });
 
   //When frontend need to show tokens earned
   it("Can check if a token exists", async function () {
-    await token_bat.mintToken(1, owner.address)
+    await token_bat.mintToken(1, owner.address, {value: "2000"})
     expect(await token_bat.tokenExists(0))
       .to.eq(true)  });
 
  //When frontend need to show images to each token
   it("Can get a token URI", async function () {
-    await token_bat.mintToken(1, owner.address)
+    await token_bat.mintToken(1, owner.address, {value: "2000"})
     const id = 0
     expect(await token_bat.tokenURI(id))
       .to.eq(`https://nft.alectrico.workers.dev/${id}`)  });
@@ -147,14 +148,14 @@ describe("TokenBat minting", function () {
   //Other can't mint unless backend issued start of sales
   it("Non-owners Can't mint if sale hasn't started", async function () {
     await expect(
-      token_bat.connect(other).mintToken(1, other.address)
+      token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
     ).to.be.revertedWith("sale hasn't started")  });
 
   //Nobdoy can't mint more than three tokens at once
   it("Can't mint more than 3", async function () {
     await token_bat.startSale()
     await expect(
-      token_bat.connect(other).mintToken(5, other.address)
+      token_bat.connect(other).mintToken(5, other.address, {value: "2000"})
     ).to.be.revertedWith("exceeds 3")  });
 
   //Tokens are hard limited to MAX_TOKENS	
@@ -164,10 +165,10 @@ describe("TokenBat minting", function () {
     this.timeout(160000)
     await token_bat.startSale()
     for (let i = 0; i < max_tokens ; i++) {
-      token_bat.connect(other).mintToken(1, other.address)
+      token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
     }
     await expect(
-      token_bat.connect(other).mintToken(1, other.address)
+      token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
     ).to.be.revertedWith("sold out")  });
 
 
