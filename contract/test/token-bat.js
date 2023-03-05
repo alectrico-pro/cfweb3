@@ -56,6 +56,8 @@ describe("TokenBat accounting rules", function () {
     const TokenBat = await ethers.getContractFactory("TokenBat");
     token_bat      = await TokenBat.deploy();
     await token_bat.deployed();
+    await token_bat.setPriceToMint( "2000");
+
     //accounts are provided by Metmask to frontend
     const accounts = await ethers.getSigners();
     owner          = accounts[0]
@@ -67,24 +69,22 @@ describe("TokenBat accounting rules", function () {
     max_tokens     = await token_bat.MAX_TOKENS(); });;
 
 
-  it("Equality of inventorie: money in => token out ", async function () {
+  it("Should revert minting token when no pay", async function () {
+     await expect( token_bat.mintToken(1, owner.address ))
+                  .to.be.revertedWith('pay to mint') });
 
-   await expect( () => token_bat.mintToken(1, owner.address, { value: "2000"} ) )
-                  .to.changeEtherBalance( 
-			  token_bat, 
-			  "2000" );
 
-   await expect( () => token_bat.mintToken(1, owner.address, { value: "2000"} ))
-                  .to.changeEtherBalance( 
-                          owner, 
-                          "-2000" );
-   
-   await expect(() => token_bat.mintToken(1, owner.address, { value: "2000" } ))
-		  .to.changeTokenBalance(
-			  token_bat,
-			  owner, 
-			  1);
-  })
+  it("Can't grant Eality of inventorie when no money was passed", async function () {
+     await expect(  token_bat.mintToken(1, owner.address, { value: "2001"} ))
+                  .to.be.revertedWith('pay to mint') });
+
+  it("Can get Eality of inventorie when right price was payed", async function () { 	
+     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+                  .to.not.changeEtherBalance(token_bat,"2000" )
+                  .and.to.not.changeEtherBalance( owner,"-2000" )
+                  .and.to.not.changeTokenBalance( token_bat, owner, 1); })
+
+
 
 });
 

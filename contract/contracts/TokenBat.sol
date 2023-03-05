@@ -33,14 +33,12 @@ abstract contract ContextMixin {
     }
 }
 
-contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, SendEther {
+contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
     using SafeMath for uint256;
 
     uint256 public constant MAX_TOKENS = 64;
-    uint256 public debe;
-    uint256 public haber;
-    uint256 public priceToPay;
+    uint256 public priceToMint;
 
     bool public hasSaleStarted = false;
     string baseURI;
@@ -58,6 +56,11 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, Send
         
     {}
 
+    function setPriceToMint(uint256 _priceToMint) public onlyOwner  {
+       require(_priceToMint > 0, 'price positive pls' );
+       priceToMint = _priceToMint;
+    }
+
     function mintToken(uint256 quantity, address receiver) public payable {
         require(hasSaleStarted || msg.sender == owner(), "sale hasn't started");
         require(quantity > 0, "quantity cannot be zero");
@@ -66,6 +69,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin, Send
             totalSupply().add(quantity) <= MAX_TOKENS || msg.sender == owner(),
             "sold out"
         );
+        require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
 
         for (uint256 i = 0; i < quantity; i++) {
             uint256 mintIndex = totalSupply();
