@@ -79,19 +79,30 @@ describe("TokenBat accounting rules", function () {
 
 
   it("Can't grant Eality of inventorie when no money was passed", async function () {
-     await expect(  token_bat.mintToken(1, owner.address, { value: "2001"} ))
+     await expect( token_bat.mintToken(1, owner.address, { value: "2001"} ))
                   .to.be.revertedWith('pay to mint') });
 
 
-  it("Granting Equality of inventorie with the right price", async function () { 	
-      expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+  it("Can Gran Equality of inventorie when money was passed", async function () { 	
+     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
                   .to.changeEtherBalance(token_bat,"2000" )
                   .and.to.changeEtherBalance( owner,"-2000" )
                   .and.to.changeTokenBalance( token_bat, owner, 1); })
 
+  it("Can Gran Equality of inventorie when money was passed", async function () {                  
+     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+                  .to.changeEtherBalance(token_bat,"2000" )
+                  .and.to.changeEtherBalance( owner,"-2000" ) })
+
+
+  it("Can Gran Equality of inventorie when money was passed", async function () { 
+     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+                  .to.changeEtherBalance(token_bat,"2000" ) })
+
 
   it("Protecting the minting by setting the price", async function () {
      await expect( token_bat.setPriceToMint( "2000")).to.not.be.reverted;  })
+
 
   it("Minting shoudn't be free of costs", async function () {
      await expect( token_bat.setPriceToMint( "0")).to.be.reverted;  })
