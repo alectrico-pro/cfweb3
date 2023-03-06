@@ -40,7 +40,7 @@ describe("TokenBat Redeeming", function () {
 
   //When user press Canjear in the Frontend
   it("Can Redeem if is the owner", async function () {
-    expect( token_bat.redeemToken(1, owner.address))
+    expect( token_bat.connect(owner).redeemToken(1))
       .to.emit( token_bat, 'Redeemed')
       .withArgs(1, owner.address);  });
 });

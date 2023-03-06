@@ -57,20 +57,15 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
     { }
 
     function setPriceToMint(uint256 _priceToMint) public onlyOwner  {
-       //require(msg.sender == owner(), "only owner can set price to mit");
-       require(msg.sender == owner(), "");
-       //require(_priceToMint > 0, 'priceToMint has to be positive' );
-       require(_priceToMint > 0, "" );
+       require(msg.sender == owner(), "only owner can set price to mit");
+       require(_priceToMint > 0, 'priceToMint has to be positive' );
        priceToMint = _priceToMint;
     }
 
     function mintToken(uint256 quantity, address receiver) public payable {
-        //require(hasSaleStarted || msg.sender == owner(), "sale hasn't started");
-        require(hasSaleStarted || msg.sender == owner(), "");
-        //require(quantity > 0, "quantity cannot be zero");
-        require(quantity > 0, "");
-        //require(quantity <= 3, "exceeds 3");
-        require(quantity <= 3, "");
+        require(hasSaleStarted || msg.sender == owner(), "sale hasn't started");
+        require(quantity > 0, "quantity cannot be zero");
+        require(quantity <= 3, "exceeds 3");
         require(
             totalSupply().add(quantity) <= MAX_TOKENS || msg.sender == owner(),
             "sold out"
@@ -85,8 +80,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
     }
 
     function redeemToken(uint256 tokenId) onlyOwner public {
-   //     require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
-        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "");
+        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
         //uint256 clientToRedeem = _clientToRedeem.current();
         //_clientToRedeem.increment();
         _burn(tokenId);
