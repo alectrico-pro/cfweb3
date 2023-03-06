@@ -33,7 +33,12 @@ describe("TokenBat Redeeming", function () {
     wallet         = accounts[owner, other];
 
     
-
+     await token_bat.setPriceToMint( "2000");
+     await token_bat.connect(owner).mintToken(1, other.address, {value: "2000"});
+     token_id = await token_bat.connect(owner).tokenOfOwnerByIndex(other.address, 0);
+     console.log("token_id");
+     console.log(token_id);
+	  
     //max_tokens is an important feature that allow
     //scarcy effect on token, so they can increase
     //value over time
@@ -41,25 +46,45 @@ describe("TokenBat Redeeming", function () {
 
   //When user press Canjear in the Frontend
   it("Can Redeem if is the owner", async function () {
-    expect( token_bat.connect(owner).redeemToken(1))
+    expect( token_bat.connect(owner).redeemToken(token_id))
       .to.emit( token_bat, 'Redeemed')
       .withArgs(1, owner.address);  });
 
-  it("Can't Redeem if not the owner", async function () {
+  it("Can't Redeem if not the owner and not sales started", async function () {
     expect( token_bat.connect(other).redeemToken(1))
-      .to.be.reverted })
+      .to.be.revertedWith("You don't have tokens in this platform, try buying a token or with another wallet") });
 	
-  describe("When other minted a token", function () { 
+  describe("Token redeemed can't be minted again", function () { 
     beforeEach( async function (){
-	      //When backend issue start of sales
       await token_bat.startSale();
       await token_bat.setPriceToMint( "2000");
-      await token_bat.connect(other).mintToken(1, other.address, {value: "2000"});  })
+      await token_bat.connect(other).mintToken(1, other.address, {value: "2000"});  
+      token_id_next = await token_bat.connect(other).tokenOfOwnerByIndex(other.address, 1);
+      console.log("token_id_next");
+      console.log(token_id_next);
+   });
 
-     it( "hh", async function () {})
-	  
-    })
+     it( "new token exists on the contract", async function () { 
+        token_bat.connect(other).ownerOf(token_id_next)
+     })
 
+     it( "token_ids are ordered", async function () {
+        expect(token_id_next).to.be.gt(token_id);
+     })
+
+     it( "token can be redeemed", async function () { 
+        token_bat.connect(other).redeemToken(token_id, other)
+     })
+
+     //minToken use total_suply as id for the new tokens
+     //but redeem afected total_suply and should'nt be
+     //use again as index form tokens
+     it( "But minToken get stuck", async function () {
+       expect(
+          token_bat.connect(other).mintToken(1, other.address, {value: "2000"}) 
+       ).be.reverted
+     })  
+  })
 });
 
 //ttps://hardhat.org/hardhat-chai-matchers/docs/overview
