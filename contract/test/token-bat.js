@@ -43,6 +43,12 @@ describe("TokenBat Redeeming", function () {
     expect( token_bat.connect(owner).redeemToken(1))
       .to.emit( token_bat, 'Redeemed')
       .withArgs(1, owner.address);  });
+
+  it("Can't Redeem if not the owner", async function () {
+    expect( token_bat.connect(other).redeemToken(1))
+      .to.be.reverted })
+	
+
 });
 
 //ttps://hardhat.org/hardhat-chai-matchers/docs/overview
