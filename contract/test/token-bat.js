@@ -32,6 +32,7 @@ describe("TokenBat Redeeming", function () {
     other          = accounts[1]
     wallet         = accounts[owner, other];
 
+    
 
     //max_tokens is an important feature that allow
     //scarcy effect on token, so they can increase
@@ -48,6 +49,16 @@ describe("TokenBat Redeeming", function () {
     expect( token_bat.connect(other).redeemToken(1))
       .to.be.reverted })
 	
+  describe("When other minted a token", function () { 
+    beforeEach( async function (){
+	      //When backend issue start of sales
+      await token_bat.startSale();
+      await token_bat.setPriceToMint( "2000");
+      await token_bat.connect(other).mintToken(1, other.address, {value: "2000"});  })
+
+     it( "hh", async function () {})
+	  
+    })
 
 });
 
