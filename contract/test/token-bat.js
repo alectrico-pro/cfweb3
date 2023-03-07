@@ -10,7 +10,6 @@ describe("TokenBat Deployment", function () {
   });
 })
 
-
 describe("TokenBat Redeeming", function () {
 
   let token_bat;
@@ -55,7 +54,8 @@ describe("TokenBat Redeeming", function () {
   it("Can't Redeem at call from other and when not sales started", async function () {
     expect( token_bat.connect(other).redeemToken(0))
       .to.be.revertedWith("you don't owned this token") });
-	
+
+
   describe("Token redeemed can't be minted again", function () { 
     beforeEach( async function (){
       //In this secenary we have alreadey a token owne by contract's owner
@@ -174,6 +174,15 @@ describe("TokenBat accounting rules", function () {
     max_tokens     = await token_bat.MAX_TOKENS(); });;
 
 
+
+
+  it("Should withdraw then full Balance to the owner account", async function () {
+     await expect( token_bat.connect(owner).withdrawBalance())
+                  .to.not.eq(true) });
+
+  it("Other can't withdraw", async function () {
+     await expect( token_bat.connect(other).withdrawBalance()) 
+                  .to.be.reverted });
 
   it("Should revert minting token when no pay", async function () {
      await expect( token_bat.mintToken( owner.address ))

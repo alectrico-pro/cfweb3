@@ -72,6 +72,18 @@
     });
   }
 
+  async function withdraw() {
+    await contractWithSigner.withdrawBalance();
+    withdrawed= false;
+    loading = true;
+
+    contractWithSigner.on("Withdrawed", (from, to, transaccion, event) => {
+      console.log("Withdrawed");
+      redeemed = false;
+      loading = false;
+    });
+  }
+
 
   async function redeem(token_id) {
     const id= "token_"+token_id;
@@ -246,6 +258,10 @@
       </section>
 
       <h2>Your Tokens:</h2>
+        <section>
+           <button on:click={withdraw}>WithDraw</button>
+        </section>
+
       {#if ownedTokens}
         <section>
           <ul class="grid">

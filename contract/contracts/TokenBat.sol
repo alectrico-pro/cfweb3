@@ -44,6 +44,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
     event Minted(uint256 tokenId, address owner);
     event Redeemed(uint256 tokenId);
+
     constructor()
         ERC721PresetMinterPauserAutoId(
             "TokenBat",
@@ -52,13 +53,14 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         )      
     { }
 
-    function withdrawBalance() public onlyOwner{
+    function withdrawBalance() public onlyOwner returns (bool) {
         require(!lock, 'Reentrancy Detected');
         lock = true;
         uint toWithdraw = (address(this).balance - ((address(this).balance * 10) / 100));
         (bool sent, ) = owner().call{value: toWithdraw}("");
         require(sent, "Transaction failed");
         lock = false;
+        return sent;
     }
 
     function setPriceToMint(uint256 _priceToMint) public onlyOwner  {
@@ -96,6 +98,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
     function startSale() public onlyOwner {
         hasSaleStarted = true;
     }
+
 
     function pauseSale() public onlyOwner {
         hasSaleStarted = false;
