@@ -5,7 +5,7 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82";
+  const CONTRACT_ID = "0xfbC22278A96299D91d41C453234d97b4F5Eb9B2d";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -21,7 +21,6 @@
   let account = null;
   let minted = false;
   let loading = false;
-  let quantity = 1;
 
   let redeemed = false;
 
@@ -59,10 +58,15 @@
   }
 
   async function mint() {
-    await contractWithSigner.mintToken(quantity, account, {value: "7000000000000000"});
+    await contractWithSigner.mintToken( account, {value: "7000000000000000"});
     redeemed = false;
     loading = true;
+
     contractWithSigner.on("Minted", (from, to, transaccion, event) => {
+      fetchLastMinted();
+     // if (loading == false) {
+      //  fetchLastMinted();
+     // }
       redeemed = false;
       loading = false;
     });
@@ -149,6 +153,30 @@
     });
   }
 
+  async function fetchLastMinted() {
+    let lastMintEvent = await contract.queryFilter({
+      topics: [
+       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
+      ],
+    });
+
+    lastMintEvent = lastMintEvent.slice(-1);
+
+    await lastMintEvent.map(async (MintEvent) => {
+      console.log( "En lastMintEvent" );
+      const token = MintEvent.args.tokenId;
+
+      if ( ! document.getElementById( token ) ) {
+        const URI = await contract.tokenURI(token);
+        const response = await fetch(URI);
+        const result = await response.json();
+        result.id = token;
+        ownedTokens.push(result);
+        ownedTokens = ownedTokens;
+      }
+    });
+  }
+
 </script>
 
 
@@ -205,14 +233,6 @@
       {/if}
 
       <form on:submit|preventDefault={mint}>
-        <input
-          type="number"
-          min="1"
-          max="3"
-          placeholder="Quantity to mint"
-          bind:value={quantity}
-        />
-
         {#if currentMinted >= maxTokens}
           <button disabled type="submit">Sold out</button>
         {:else}
@@ -257,7 +277,6 @@
       <h2>Login with Metamask to mint your NFT</h2>
       <button on:click={login}>Login</button>
 
-      <h2>Recently Minted NFTs:</h2>
       {#if recentlyMintedTokens}
         <section>
           <ul class="grid">
