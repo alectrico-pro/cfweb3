@@ -5,7 +5,7 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
+  const CONTRACT_ID = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -25,6 +25,11 @@
   let redeemed = false;
   let withdrawed = false;
 
+  let owner_account = null;
+  let owner_logged_in = false;
+
+  let sale_started = false;
+
   onMount(() => {
     chain = window.ethereum.networkVersion;
   });
@@ -34,8 +39,10 @@
     signer = provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
     contractWithSigner = contract.connect(signer);
+    sale_started  = contract.hasSaleStarted;
   }
-  
+
+      
   async function init() {
     if (!account && ethereum.selectedAddress) {
       account = ethereum.selectedAddress;
@@ -44,6 +51,11 @@
     if (account) {
       findCurrentOwned();
       findCurrentMinted();
+      owner_account = await contract.getOwner();
+      if (Number(account) == Number(owner_account)) {
+         console.log("El dueño del contracto esa logado");
+         owner_logged_in = true;
+      };
     } else {
       fetchRecentlyMinted();
     }
@@ -63,10 +75,10 @@
     loading = true;
 
     contractWithSigner.on("Minted", (from, to, transaccion, event) => {
-      fetchLastMinted();
-     // if (loading == false) {
-      //  fetchLastMinted();
-     // }
+     // fetchLastMinted();
+      if (loading == false) {
+       fetchLastMinted();
+      }
       redeemed = false;
       loading = false;
     });
@@ -77,12 +89,33 @@
     withdrawed= false;
     loading = true;
 
-    contractWithSigner.on("Withdrawed", (from, to, transaccion, event) => {
+    contractWithSigner.on("Withdrawed", (from, to, balance, transaccion, event) => {
       console.log("Withdrawed");
+      console.log("Amount withdrawed from the contract:");
+      console.log(0.000000000000000001 * Number(transaccion.args.amount));
+      console.log("Current Contract's balance:");
+      console.log(0.000000000000000001 * Number(transaccion.args.balance));
+
+      console.log("Current Owner's Account balance:");
+      console.log(0.000000000000000001 * Number(transaccion.args.owner_current_balance));
+
       redeemed = false;
       loading = false;
     });
   }
+
+  async function start_sale() {
+    await contractWithSigner.startSale();
+    sale_started = false;
+    loading = true;
+
+    contractWithSigner.on("SaleStarted", (from, to, transaccion, event) => {
+      sale_started = true;
+      loading = false;
+      cosole.log("Sale Started");
+    });
+  }
+
 
 
   async function redeem(token_id) {
@@ -219,6 +252,7 @@
     {#if account}
       <h1>👋 Welcome to the Cloudflare Web3 app</h1>
       <h2>You are currently logged in as {account.slice(0, 5)}</h2>
+      {#if sale_started} <h3> Sale Started </h3> {/if}
       {#if loading}
         <p>Transaction processing...</p>
       {/if}
@@ -258,9 +292,19 @@
       </section>
 
       <h2>Your Tokens:</h2>
-        <section>
-           <button on:click={withdraw}>WithDraw</button>
-        </section>
+
+      {#if owner_logged_in}
+       <h1>Owner Logged In</h1>
+       {#if ethereum}
+          <section>
+             <button on:click={withdraw}>WithDraw</button>
+             {#if sale_started}
+             {:else}
+               <button on:click={start_sale}>Start Sale</button>
+             {/if}
+           </section>
+        {/if}
+      {/if}
 
       {#if ownedTokens}
         <section>
