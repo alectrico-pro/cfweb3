@@ -66,28 +66,17 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
        priceToMint = _priceToMint;
     }
 
-    function mintToken(uint256 quantity, address receiver) public payable {
+    function mintToken( address receiver) public payable {
         require(hasSaleStarted || msg.sender == owner(), "sale hasn't started");
-        require(quantity > 0, "quantity cannot be zero");
-        require(quantity <= 3, "exceeds 3");
         require(
-            totalSupply().add(quantity) <= MAX_TOKENS || msg.sender == owner(),
+            totalSupply().add(1) <= MAX_TOKENS || msg.sender == owner(),
             "sold out"
         );
         require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
-
-       // for (uint256 i = 0; i < quantity; i++) {
-       //     uint256 mintIndex = totalSupply();
-       //     _safeMint(receiver, mintIndex);
-       //     emit Minted(mintIndex, receiver);
-       // }
-
         uint256 tokenId = _tokenIdCounter.current();
         _safeMint(receiver, tokenId);
         _tokenIdCounter.increment();
         emit Minted(tokenId, receiver);
-
-
     }
 
     function redeemToken(uint256 tokenId) public {

@@ -38,7 +38,7 @@ describe("TokenBat Redeeming", function () {
 
 
     //The contracts'owner mint a new token
-    await token_bat.connect(owner).mintToken(1, owner.address, {value: "2000"});
+    await token_bat.connect(owner).mintToken( owner.address, {value: "2000"});
     owner_token_id = await token_bat.connect(owner).tokenOfOwnerByIndex(owner.address, 0);
 	  
     //max_tokens is an important feature that allow
@@ -54,7 +54,7 @@ describe("TokenBat Redeeming", function () {
 
   it("Can't Redeem at call from other and when not sales started", async function () {
     expect( token_bat.connect(other).redeemToken(0))
-      .to.be.revertedWith("ERC721Enumerable: owner index out of bounds") });
+      .to.be.revertedWith("you don't owned this token") });
 	
   describe("Token redeemed can't be minted again", function () { 
     beforeEach( async function (){
@@ -66,7 +66,7 @@ describe("TokenBat Redeeming", function () {
       //Then each differente token's has tokens a 0 index
       await token_bat.startSale();
       await token_bat.setPriceToMint( "2000");
-      await token_bat.connect(other).mintToken(1, other.address, {value: "2000"});  
+      await token_bat.connect(other).mintToken( other.address, {value: "2000"});  
       other_token_id = await token_bat.connect(other).tokenOfOwnerByIndex(other.address, 0);
     });
 
@@ -82,7 +82,7 @@ describe("TokenBat Redeeming", function () {
      //but redeem afected total_suply and should'nt be
      //use again as index form tokens
     it( "minToken can't get stuck after redeem", async function () {
-      await token_bat.connect(other).mintToken(1, other.address, {value: "2000"});
+      await token_bat.connect(other).mintToken( other.address, {value: "2000"});
       total = await token_bat.connect(other).totalSupply();
       //we have minted two others token and one owner token, 
       //this totalize 3 tokens on the contract
@@ -98,7 +98,7 @@ describe("TokenBat Redeeming", function () {
       //if redeemToken is doin well
       //we should succed on performin another mintToken after redeemToken
       await expect(
-        token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
+        token_bat.connect(other).mintToken( other.address, {value: "2000"})
       ).to.not.be.reverted;
 
       //To be more clear, we have further investiaged totalSupply
@@ -176,29 +176,29 @@ describe("TokenBat accounting rules", function () {
 
 
   it("Should revert minting token when no pay", async function () {
-     await expect( token_bat.mintToken(1, owner.address ))
+     await expect( token_bat.mintToken( owner.address ))
                   .to.be.revertedWith('pay to mint') });
 
 
   it("Can't grant Eality of inventorie when no money was passed", async function () {
-     await expect( token_bat.mintToken(1, owner.address, { value: "2001"} ))
+     await expect( token_bat.mintToken( owner.address, { value: "2001"} ))
                   .to.be.revertedWith('pay to mint') });
 
 
   it("Can Gran Equality of inventorie when money was passed", async function () { 	
-     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+     expect( await token_bat.mintToken( owner.address, { value: "2000"} ))
                   .to.changeEtherBalance(token_bat,"2000" )
                   .and.to.changeEtherBalance( owner,"-2000" )
                   .and.to.changeTokenBalance( token_bat, owner, 1); })
 
   it("Can Gran Equality of inventorie when money was passed", async function () {                  
-     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+     expect( await token_bat.mintToken( owner.address, { value: "2000"} ))
                   .to.changeEtherBalance(token_bat,"2000" )
                   .and.to.changeEtherBalance( owner,"-2000" ) })
 
 
   it("Can Gran Equality of inventorie when money was passed", async function () { 
-     expect( await token_bat.mintToken(1, owner.address, { value: "2000"} ))
+     expect( await token_bat.mintToken( owner.address, { value: "2000"} ))
                   .to.changeEtherBalance(token_bat,"2000" ) })
 
 
@@ -254,7 +254,7 @@ describe("TokenBat minting", function () {
 
   //When user press Mint on Frontend
   it("Can mint if is the owner", async function () {
-    expect( token_bat.mintToken(1, owner.address, {value: "2000"}))
+    expect( token_bat.mintToken( owner.address, {value: "2000"}))
       .to.emit( token_bat, 'Minted')
       .withArgs(0, owner.address);  });
 
@@ -262,19 +262,19 @@ describe("TokenBat minting", function () {
   it("Can mint if sales started", async function () {
     await token_bat.startSale();
     await expect(
-      token_bat.connect(other).mintToken(1, other.address, {value: "2000"}))
+      token_bat.connect(other).mintToken( other.address, {value: "2000"}))
       .to.emit( token_bat, 'Minted')
       .withArgs(0, other.address);  });
 
   //When frontend need to show tokens earned
   it("Can check if a token exists", async function () {
-    await token_bat.mintToken(1, owner.address, {value: "2000"})
+    await token_bat.mintToken( owner.address, {value: "2000"})
     expect(await token_bat.tokenExists(0))
       .to.eq(true)  });
 
  //When frontend need to show images to each token
   it("Can get a token URI", async function () {
-    await token_bat.mintToken(1, owner.address, {value: "2000"})
+    await token_bat.mintToken( owner.address, {value: "2000"})
     const id = 0
     expect(await token_bat.tokenURI(id))
       .to.eq(`https://nft.alectrico.workers.dev/${id}`)  });
@@ -282,15 +282,15 @@ describe("TokenBat minting", function () {
   //Other can't mint unless backend issued start of sales
   it("Non-owners Can't mint if sale hasn't started", async function () {
     await expect(
-      token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
+      token_bat.connect(other).mintToken( other.address, {value: "2000"})
     ).to.be.revertedWith("sale hasn't started")  });
 
   //Nobdoy can't mint more than three tokens at once
-  it("Can't mint more than 3", async function () {
-    await token_bat.startSale()
-    await expect(
-      token_bat.connect(other).mintToken(5, other.address, {value: "2000"})
-    ).to.be.revertedWith("exceeds 3")  });
+  //it("Can't mint more than 3", async function () {
+  //  await token_bat.startSale()
+  //  await expect(
+  //    token_bat.connect(other).mintToken(5, other.address, {value: "2000"})
+  //  ).to.be.revertedWith("exceeds 3")  });
 
   //Tokens are hard limited to MAX_TOKENS	
   it("Can't mint once over limit", async function () {
@@ -299,10 +299,10 @@ describe("TokenBat minting", function () {
     this.timeout(160000)
     await token_bat.startSale()
     for (let i = 0; i < max_tokens ; i++) {
-      token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
+      token_bat.connect(other).mintToken( other.address, {value: "2000"})
     }
     await expect(
-      token_bat.connect(other).mintToken(1, other.address, {value: "2000"})
+      token_bat.connect(other).mintToken( other.address, {value: "2000"})
     ).to.be.revertedWith("sold out")  });
 
 

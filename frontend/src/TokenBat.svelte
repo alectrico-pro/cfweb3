@@ -5,7 +5,7 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
+  const CONTRACT_ID = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -62,27 +62,43 @@
     await contractWithSigner.mintToken(quantity, account, {value: "7000000000000000"});
     redeemed = false;
     loading = true;
-    contractWithSigner.on("Minted", (from, to, amount, event) => {
-      minted = true;
+    contractWithSigner.on("Minted", (from, to, transaccion, event) => {
       redeemed = false;
       loading = false;
-      currentMinted += 1;
-      ownedTokens = ownedTokens;
     });
   }
 
 
   async function redeem(token_id) {
+    const id= "token_"+token_id;
+    const elemento = document.getElementById(id);
+    elemento.replaceWith("");
     await contractWithSigner.redeemToken(token_id);
     minted = false;
     loading = true;
-    ownedTokens.pop(token_id);
+
     contractWithSigner.on("Redeemed", (from, to, amount, event) => {
-      redeemed = true;
       loading = false;
       currentMinted -= 1;
       ownedTokens = ownedTokens;
+      redeemed = true;
     });
+  }
+
+
+  async function updateCurrentOwned() {
+    ownedTokens = [];
+    const numberOfTokensOwned = await contract.balanceOf(account);
+    for (let i = 0; i < Number(numberOfTokensOwned); i++) {
+      const token    = await contract.tokenOfOwnerByIndex(account, i);
+      const URI      = await contract.tokenURI(token);
+      const response = await fetch(URI);
+      const result   = await response.json();
+      result.id      = token;
+      ownedTokens.push(result);
+    }
+    currentMinted = ownedTokens.length;
+    ownedTokens = ownedTokens;
   }
 
 
@@ -95,7 +111,6 @@
       const response = await fetch(URI);
       const result   = await response.json();
       result.id      = token;
-
       ownedTokens.push(result);
     }
     ownedTokens = ownedTokens;
@@ -114,13 +129,14 @@
   async function fetchRecentlyMinted() {
     let recentMintEvents = await contract.queryFilter({
       topics: [
-       "1",
+       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
       ],
     });
 
     recentMintEvents = recentMintEvents.slice(-3);
 
     await recentMintEvents.map(async (MintEvent) => {
+      console.log( "En recentMintEvents" );
       const token = MintEvent.args.tokenId;
       const URI = await contract.tokenURI(token);
       const response = await fetch(URI);
@@ -214,7 +230,7 @@
         <section>
           <ul class="grid">
             {#each ownedTokens as token}
-              <li>
+              <li id="token_{token.id}">
                 <div class="grid-image">
                   <img src={token.image} alt={token.description} />
                 </div>
@@ -264,6 +280,7 @@
         </section>
       {/if}
     {/if}
+
   {:else}
     <h1>This app requires a Metamask wallet.</h1>
     <p>
