@@ -79,8 +79,9 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         }
     }
 
-    function redeemToken(uint256 tokenId) onlyOwner public {
-        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
+    function redeemToken(uint256 tokenId) public {
+        require(_exists(tokenId), "token does not exists");
+        require( ownerOf(tokenId) == msg.sender,"you don't owned this token");
         //uint256 clientToRedeem = _clientToRedeem.current();
         //_clientToRedeem.increment();
         _burn(tokenId);
