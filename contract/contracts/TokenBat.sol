@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-08-27
- */
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -10,8 +6,6 @@ import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAut
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import '@openzeppelin/contracts/utils/Counters.sol';
-
-//import "./SendEther.sol";
 
 /**
  * https://github.com/maticnetwork/pos-portal/blob/master/contracts/common/ContextMixin.sol
@@ -37,6 +31,7 @@ abstract contract ContextMixin {
 
 contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
+    bool lock = false;
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
@@ -49,16 +44,22 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
     event Minted(uint256 tokenId, address owner);
     event Redeemed(uint256 tokenId);
-
-
     constructor()
         ERC721PresetMinterPauserAutoId(
             "TokenBat",
             "TokenBat",
             "https://nft.alectrico.workers.dev/"
-        )
-        
+        )      
     { }
+
+    function withdrawBalance() public onlyOwner{
+        require(!lock, 'Reentrancy Detected');
+        lock = true;
+        uint toWithdraw = (address(this).balance - ((address(this).balance * 10) / 100));
+        (bool sent, ) = owner().call{value: toWithdraw}("");
+        require(sent, "Transaction failed");
+        lock = false;
+    }
 
     function setPriceToMint(uint256 _priceToMint) public onlyOwner  {
        require(msg.sender == owner(), "only owner can set price to mit");
@@ -88,6 +89,9 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         emit Redeemed(tokenId);
         //_client = clientData[clientToRedeem];
     }
+
+
+
 
     function startSale() public onlyOwner {
         hasSaleStarted = true;
