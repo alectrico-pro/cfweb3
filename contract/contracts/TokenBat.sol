@@ -9,6 +9,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import '@openzeppelin/contracts/utils/Counters.sol';
+
 //import "./SendEther.sol";
 
 /**
@@ -36,6 +38,8 @@ abstract contract ContextMixin {
 contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
     using SafeMath for uint256;
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIdCounter;
 
     uint256 public constant MAX_TOKENS = 64;
     uint256 public priceToMint;
@@ -72,11 +76,18 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         );
         require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
 
-        for (uint256 i = 0; i < quantity; i++) {
-            uint256 mintIndex = totalSupply();
-            _safeMint(receiver, mintIndex);
-            emit Minted(mintIndex, receiver);
-        }
+       // for (uint256 i = 0; i < quantity; i++) {
+       //     uint256 mintIndex = totalSupply();
+       //     _safeMint(receiver, mintIndex);
+       //     emit Minted(mintIndex, receiver);
+       // }
+
+        uint256 tokenId = _tokenIdCounter.current();
+        _safeMint(receiver, tokenId);
+        _tokenIdCounter.increment();
+        emit Minted(tokenId, receiver);
+
+
     }
 
     function redeemToken(uint256 tokenId) public {

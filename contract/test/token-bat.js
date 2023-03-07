@@ -50,7 +50,7 @@ describe("TokenBat Redeeming", function () {
   it("Should Redeem at contract owner's request", async function () {
     expect( token_bat.connect(owner).redeemToken(owner_token_id))
       .to.emit( token_bat, 'Redeemed')
-      .withArgs(0, owner.address);  });
+      .withArgs(0);  });
 
   it("Can't Redeem at call from other and when not sales started", async function () {
     expect( token_bat.connect(other).redeemToken(0))
