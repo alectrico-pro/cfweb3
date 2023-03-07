@@ -5,7 +5,7 @@
 
 
   import Contract from "./TokenBat.sol/TokenBat.json";
-  const CONTRACT_ID = "0xfbC22278A96299D91d41C453234d97b4F5Eb9B2d";
+  const CONTRACT_ID = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
@@ -23,7 +23,7 @@
   let loading = false;
 
   let redeemed = false;
-
+  let withdrawed = false;
 
   onMount(() => {
     chain = window.ethereum.networkVersion;

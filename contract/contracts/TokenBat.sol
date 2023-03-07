@@ -44,6 +44,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
 
     event Minted(uint256 tokenId, address owner);
     event Redeemed(uint256 tokenId);
+    event Withdrawed();
 
     constructor()
         ERC721PresetMinterPauserAutoId(
@@ -60,6 +61,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         (bool sent, ) = owner().call{value: toWithdraw}("");
         require(sent, "Transaction failed");
         lock = false;
+        emit Withdrawed();
         return sent;
     }
 
