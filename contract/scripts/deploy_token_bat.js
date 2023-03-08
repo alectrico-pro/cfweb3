@@ -6,7 +6,27 @@
 const hre = require("hardhat");
 
 async function main() {
-  const TokenBat = await hre.ethers.getContractFactory("TokenBat");
+  const TokenBat = await hre.ethers.getContractFactory("TokenBat"); 
+  const gasPrice = await TokenBat.signer.getGasPrice();
+	
+  console.log(`Current gas price: ${gasPrice}`);
+
+  const estimatedGas = await TokenBat.signer.estimateGas(
+    TokenBat.getDeployTransaction(),
+  );
+  console.log(`Estimated gas: ${estimatedGas}`);
+
+  const deploymentPrice = gasPrice.mul(estimatedGas);
+  const deployerBalance = await TokenBat.signer.getBalance();
+  console.log(`Deployer balance:  ${ethers.utils.formatEther(deployerBalance)}`);
+  console.log(`Deployment price:  ${ethers.utils.formatEther(deploymentPrice)}`);
+  if (deployerBalance.lt(deploymentPrice)) {
+    throw new Error(
+      `Insufficient funds. Top up your account balance by ${ethers.utils.formatEther(
+        deploymentPrice.sub(deployerBalance),
+      )}`,
+    );
+  }
   const token_bat = await TokenBat.deploy();
   await token_bat.deployed();
   console.log("TokenBat deployed to:", token_bat.address);
