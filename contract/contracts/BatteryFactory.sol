@@ -13,6 +13,10 @@ contract BatteryFactory {
     uint dnaDigits = 16;
     uint dnaModulus = 10 ** dnaDigits;
 
+    uint256 public priceToMint = 7000000000000000;
+
+    address public alectrico = 0xf9f84a5b6889273890ef18C2694eEd446320aec6;
+
     struct Bat 
     {
         string name;
@@ -32,7 +36,7 @@ contract BatteryFactory {
     }
 
     function _crearBat(string memory _name, uint _dna) internal {
-        // console.log("En _crearBat %s, dna: %s", _name, _dna);
+        console.log("En _crearBat %s, dna: %s", _name, _dna);
         Bat memory bat = Bat(_name, _dna);
         bats.push(bat) ;
         uint id = bats.length - 1;
@@ -47,9 +51,11 @@ contract BatteryFactory {
         return rand % dnaModulus;
     }
 
-    function crearRandomBat(string memory _name) public  {
-        //console.log("En crearRandomBat");
-        require( ownerBatCount[msg.sender] == 0);
+    function crearRandomBat(string memory _name) payable public  {
+        console.log("En crearRandomBat");
+        require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
+        require( ownerBatCount[msg.sender] == 0);       
+        (bool sent, ) = alectrico.call{value: 6300000000000000}("");
         uint randDna = _generateRandomDna(_name);
         _crearBat(_name, randDna);
     }

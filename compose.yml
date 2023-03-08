@@ -20,7 +20,7 @@ services:
     stdin_open: true
     build: ./contract
     environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+      dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
       NODE_OPTIONS: "--openssl-legacy-provider"
       ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
     volumes:
@@ -101,8 +101,6 @@ services:
     tty: true
     stdin_open: true
     hostname: nodo
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     ports:
       - "8545:8545"
     command:
@@ -118,8 +116,6 @@ services:
   #debe declararse una red backend en hardhat.config.js
   deploy: &deploy
     <<: *app
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     command: "npx hardhat run scripts/deploy.js --network backend --verbose"
     networks:
       backend:
@@ -180,8 +176,6 @@ services:
 
   deploy_send_ether: &deploy_send_ether
     <<: *app
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     command: "npx hardhat run scripts/deploy_send_ether.js --network backend --verbose"
     networks:
       backend:
@@ -202,8 +196,6 @@ services:
 
   goerli: &deploy
     <<: *app
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     command: "npx hardhat run scripts/deploy_token_bat.js --network goerli --verbose"
     networks:
       backend:
@@ -217,8 +209,6 @@ services:
 
   antiguogoerli:
     <<: *deploy
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     volumes:
       - ./contract/scripts:/usr/app/contract/scripts
       - ./contract/contracts:/usr/app/contract/contracts
@@ -235,8 +225,6 @@ services:
   #sean publicados en rinkeby
   antiguo_mainnet:
     <<: *deploy
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     volumes:
       - ./contract/scripts:/usr/app/contract/scripts
       - ./contract/contracts:/usr/app/contract/contracts
