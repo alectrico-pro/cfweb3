@@ -21,6 +21,7 @@ services:
     build: ./contract
     environment:
       dapk: "8dc139be3c85d64e2420f93eaf7a90d547f2b6fd3ebd0a72d4dce30a1bf4f145"
+
       NODE_OPTIONS: "--openssl-legacy-provider"
       ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
     volumes:
@@ -125,6 +126,9 @@ services:
   deploy_token_bat: &deploy_token_bat
     <<: *app
     command: "npx hardhat run scripts/deploy_token_bat.js --network mainnet --verbose"
+    #aquí tiene que ser la clave privada de alectrico.eth
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     networks:
       backend:
      #debe declararse una red backend en hardhat.config.js
@@ -147,8 +151,11 @@ services:
 
   #debe declararse una red backend en hardhat.config.js
   deploy_battery_factory: &deploy_battery_factory
+
     <<: *app
     command: "npx hardhat run scripts/deploy_battery_factory.js --network mainnet --verbose"
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
     networks:
       backend:
 

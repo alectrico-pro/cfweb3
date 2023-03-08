@@ -80,7 +80,7 @@ describe("BatteryFactory minting", function () {
     expect( post_balance_alectrico).be.gt( balance_alectrico );
  });
 
- it("alectrico.eht should earn 6300000000000000 gwei each mint", async function () {
+ it("alectrico.eth should earn 6300000000000000 gwei each mint", async function () {
     balance_alectrico = await ethers.provider.getBalance("0xf9f84a5b6889273890ef18C2694eEd446320aec6");
     await token_bat.crearRandomBat( "MickyBat" , {value: "7000000000000000"});
     post_balance_alectrico = await ethers.provider.getBalance("0xf9f84a5b6889273890ef18C2694eEd446320aec6");
@@ -88,6 +88,9 @@ describe("BatteryFactory minting", function () {
  });
 
 
+ it("alectrico.eth can burn", async function () {
+    await token_bat.burnBat( 0);
+ });
 	
 
 });

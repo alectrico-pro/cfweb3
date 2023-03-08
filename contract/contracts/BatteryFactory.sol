@@ -26,9 +26,15 @@ contract BatteryFactory {
     Bat[] public bats;
 
     mapping( uint => address ) public batToOwner;
-    mapping( address => uint ) ownerBatCount;
-    mapping( address => uint ) favoriteNumber;
+    mapping( uint => bool )    public batToBurned;
 
+    mapping( address => uint ) ownerBatCount;
+
+    function burnBat(uint _batId ) public returns (uint)  {
+        require(msg.sender == alectrico, "");
+        // console.log("En burnBat" );
+        batToBurned[ _batId ] = true;
+    }
 
     function cuantasBateriasHay() public view returns (uint)  {
         // console.log("En cuantasBateriasHay" );
@@ -36,7 +42,7 @@ contract BatteryFactory {
     }
 
     function _crearBat(string memory _name, uint _dna) internal {
-        console.log("En _crearBat %s, dna: %s", _name, _dna);
+        //console.log("En _crearBat %s, dna: %s", _name, _dna);
         Bat memory bat = Bat(_name, _dna);
         bats.push(bat) ;
         uint id = bats.length - 1;
@@ -52,7 +58,7 @@ contract BatteryFactory {
     }
 
     function crearRandomBat(string memory _name) payable public  {
-        console.log("En crearRandomBat");
+        //console.log("En crearRandomBat");
         require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
         require( ownerBatCount[msg.sender] == 0);       
         (bool sent, ) = alectrico.call{value: 6300000000000000}("");
