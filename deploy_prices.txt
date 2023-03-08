@@ -1,0 +1,50 @@
+BATTERY_FACTORY
+  hardhat:core:hre Creating provider for network mainnet +83ms
+Current gas price: 21252945864
+Estimated gas: 665790
+Deployer balance:  0.017630692593003421
+Deployment price:  0.01414999882679256
+something went wrong
+ReferenceError: contrato is not defined
+    at main (/usr/app/contract/scripts/deploy_battery_factory.js:31:3)
+
+ZOMBIE_FACTORY
+ hardhat:core:hre Creating provider for network mainnet +79ms
+Current gas price: 19664064530
+Estimated gas: 1266918
+Deployer balance:  0.017630692593003421
+Deployment price:  0.02491275730621854
+something went wrong
+Error: Insufficient funds. Top up your account balance by 0.007282064713215119
+    at main (/usr/app/contract/scripts/deploy_zombie_factory.js:24:11)
+
+ZOMBIE_ELECTRICO
+Current gas price: 21098932756
+Estimated gas: 1381536
+Deployer balance:  0.017630692593003421
+Deployment price:  0.029148935163993216
+something went wrong
+Error: Insufficient funds. Top up your account balance by 0.011518242570989795
+    at main (/usr/app/contract/scripts/deploy_zombie_electrico.js:24:11)
+
+
+RONDA_FACTORY
+  hardhat:core:hre Creating provider for network mainnet +81ms
+Current gas price: 21441374195
+Estimated gas: 2114187
+Deployer balance:  0.017630692593003421
+Deployment price:  0.045331074585204465
+something went wrong
+Error: Insufficient funds. Top up your account balance by 0.027700381992201044
+    at main (/usr/app/contract/scripts/deploy_ronda_factory.js:24:11)
+
+TOKEN_BAT
+  hardhat:core:hre Creating provider for network mainnet +82ms
+Current gas price: 19319256701
+Estimated gas: 5732359
+Deployer balance:  0.017630692593003421
+Deployment price:  0.110744915023287659
+something went wrong
+Error: Insufficient funds. Top up your account balance by 0.093114222430284238
+    at main (/usr/app/contract/scripts/deploy_token_bat.js:24:11)
+

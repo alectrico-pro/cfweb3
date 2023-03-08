@@ -21,6 +21,11 @@ battery_factory:
 	docker compose run deploy_battery_factory
 
 
+ronda_factory:
+	docker compose run deploy_ronda_factory
+
+cfnft:
+	docker compose run deploy_cfnft
 
 ticket:
 	docker compose run deploy_ticket_system

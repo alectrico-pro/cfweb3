@@ -156,6 +156,20 @@ services:
     networks:
       backend:
 
+  #debe declararse una red backend en hardhat.config.js
+  deploy_ronda_factory: &deploy_ronda_factory
+    <<: *app
+    command: "npx hardhat run scripts/deploy_ronda_factory.js --network mainnet --verbose"
+    networks:
+      backend:
+
+  #debe declararse una red backend en hardhat.config.js
+  deploy_cfnft: &deploy_cfnft
+    <<: *app
+    command: "npx hardhat run scripts/deploy_cfnft.js --network mainnet --verbose"
+    networks:
+      backend:
+
 
 
   deploy_ticket_system: &deploy-ticket-system
