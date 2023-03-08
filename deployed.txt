@@ -1,0 +1,16 @@
+Current gas price: 25374581087
+Estimated gas: 570599
+Deployer balance:  0.017630692593003421
+Deployment price:  0.014478710593661113
+Contrato deployed to: 0x86f1C1664f657729B4C0e620858D077Db7827609
+something went wrong
+ReferenceError: token_bat is not defined
+    at main (/usr/app/contract/scripts/deploy_battery_factory.js:33:3)
+  hardhat:core:scripts-runner Script scripts/deploy_battery_factory.js exited with status code 1 +19s
+  hardhat:core:cli Killing Hardhat after successfully running task run +0ms
+npm notice 
+npm notice New minor version of npm available! 9.5.0 -> 9.6.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v9.6.0
+npm notice Run npm install -g npm@9.6.0 to update!
+npm notice 
+

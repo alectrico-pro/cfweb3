@@ -30,8 +30,6 @@ async function main() {
   const contrato = await Contrato.deploy();
   await contrato.deployed();
   console.log("Contrato deployed to:", contrato.address);
-  await token_bat.setPriceToMint(7000000000000000);
-  console.log("Price set to 7000000000000000 wei");
 }
 
 main()

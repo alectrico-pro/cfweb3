@@ -9,7 +9,16 @@ require("hardhat-gas-reporter");
 const pk = process.env.dapk
 
 module.exports = {
-  solidity: "0.8.4",
+  solidity:
+   {
+    version: "0.8.9",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  },	   
   paths: {
 	  artifacts: './artifacts',
   },

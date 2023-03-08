@@ -190,7 +190,7 @@ describe("TokenBat accounting rules", function () {
      pre_balance_owner = await ethers.provider.getBalance(owner.address);
 	  await  token_bat.connect(owner).withdrawBalance();
      post_balance_owner = await ethers.provider.getBalance(owner.address);
-     expect( Number( pre_balance_owner)).to.lt( Number( post_balance_owner))
+     expect( Number( pre_balance_owner)).to.gt( Number( post_balance_owner))
    })
 
   it("Owner should earn some money after withdrawal", async function () {

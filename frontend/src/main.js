@@ -1,4 +1,4 @@
-import App from './TokenBat.svelte';
+import App from './BatteryFactory.svelte';
 
 const app = new App({ target: document.body });
 

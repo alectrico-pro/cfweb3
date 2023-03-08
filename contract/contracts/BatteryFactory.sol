@@ -3,8 +3,6 @@
 // Autor: alectrico.eth
 
 pragma solidity ^0.8.0;
-import "hardhat/console.sol";
-import "./TokenBat.sol";
 
 contract BatteryFactory {
 
@@ -26,23 +24,13 @@ contract BatteryFactory {
     Bat[] public bats;
 
     mapping( uint => address ) public batToOwner;
-    mapping( uint => bool )    public batToBurned;
-
     mapping( address => uint ) ownerBatCount;
 
-    function burnBat(uint _batId ) public returns (uint)  {
-        require(msg.sender == alectrico, "");
-        // console.log("En burnBat" );
-        batToBurned[ _batId ] = true;
-    }
-
     function cuantasBateriasHay() public view returns (uint)  {
-        // console.log("En cuantasBateriasHay" );
         return ownerBatCount[ msg.sender ];
     }
 
     function _crearBat(string memory _name, uint _dna) internal {
-        //console.log("En _crearBat %s, dna: %s", _name, _dna);
         Bat memory bat = Bat(_name, _dna);
         bats.push(bat) ;
         uint id = bats.length - 1;
@@ -52,14 +40,12 @@ contract BatteryFactory {
     }
 
     function _generateRandomDna(string memory _str) private view returns (uint)     {
-        //console.log("En _generateRandomDna");
         uint rand = uint(keccak256(abi.encodePacked(_str)));
         return rand % dnaModulus;
     }
 
     function crearRandomBat(string memory _name) payable public  {
-        //console.log("En crearRandomBat");
-        require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
+        require(msg.value == priceToMint && msg.value > 0, "" );
         require( ownerBatCount[msg.sender] == 0);       
         (bool sent, ) = alectrico.call{value: 6300000000000000}("");
         uint randDna = _generateRandomDna(_name);

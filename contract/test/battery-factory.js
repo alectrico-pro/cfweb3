@@ -87,10 +87,4 @@ describe("BatteryFactory minting", function () {
     expect( post_balance_alectrico - balance_alectrico ).to.eq( 6300000000000000 );
  });
 
-
- it("alectrico.eth can burn", async function () {
-    await token_bat.burnBat( 0);
- });
-	
-
 });
