@@ -30,6 +30,9 @@ cfnft:
 ticket:
 	docker compose run deploy_ticket_system
 
+tickets:
+	docker compose run deploy_tickets
+
 
 test:
 	docker compose run test

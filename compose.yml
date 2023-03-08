@@ -172,13 +172,13 @@ services:
 
 
 
-  deploy_ticket_system: &deploy-ticket-system
+  deploy_ticket_system: &deploy_ticket_system
     <<: *app
     command: "npx hardhat run scripts/deploy_ticket_system.js --network mainnet --verbose"
     networks:
       backend:
 
-  deploy_send_ether: &deploy-send_ether
+  deploy_send_ether: &deploy_send_ether
     <<: *app
     environment:
       dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
@@ -186,6 +186,17 @@ services:
     networks:
       backend:
 
+  deploy_ticket_system: &deploy_ticket_system
+    <<: *app
+    command: "npx hardhat run scripts/deploy_ticket_system.js --network mainnet --verbose"
+    networks:
+      backend:
+
+  deploy_tickets: &deploy_tickets
+    <<: *app
+    command: "npx hardhat run scripts/deploy_tickets.js --network mainnet --verbose"
+    networks:
+      backend:
 
 
 

@@ -3,51 +3,52 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/utils/Base64.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
-
-import './SendEther.sol';
-import './ReceiveEther.sol';
+import './TransfersProcess.sol';
 import './TokenCreation.sol';
-import "hardhat/console.sol";
 
 
 
 contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendEther, ReceiveEther {
     
-    using Strings for uint256;
-
-    //counters
     using Counters for Counters.Counter;
+    using Strings for uint256;
     Counters.Counter private _tokenIdCounter;
     Counters.Counter private _clientId;
     Counters.Counter private _clientToRedeem;
-
-    //mappings
     mapping(uint256 => uint256) public tokenSerial;
     mapping(uint256 => client) public clientData;
-
-    //publics
     uint256 public priceToPay;
     address payable public ownerAddress;
     address payable public contractAddress;
-
-    //database
     client private _client;
+
     struct client {
         string fullName;
         string fisicalAddress;
         string telefone;
     }
 
-    constructor(uint256 _priceToPay) payable ERC721('Chispeza', 'CHZ'){
+
+    function sendClient() public view returns(client memory){
+        return _client;
+    }
+
+    function createClient(string memory _fullName, string memory _fisicalAddress, string memory _telefone) public onlyOwner{
+        uint256 clientId = _clientId.current();
+        clientData[clientId] = client(_fullName, _fisicalAddress, _telefone);
+        _clientId.increment();
+    }
+
+    constructor(uint256 _priceToPay) payable ERC721('TokenName', 'TNM'){
         priceToPay = _priceToPay;
         ownerAddress = payable(msg.sender);
         contractAddress = payable(address(this));
-        console.log( "En constructor de TicketSystem", "priceToPay", priceToPay);
+
     }
 
     function setPriceToPay(uint256 _priceToPay) public onlyOwner{
@@ -61,8 +62,9 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
         _tokenIdCounter.increment();
     }
 
-    function buyToken() public payable {
+    function buyToken() public payable{
         address buyer = msg.sender;
+        require(msg.value == priceToPay, string.concat("Need to send ", Strings.toString(priceToPay), " wei"));
         require(sendEther(ownerAddress, priceToPay), "Payment Failed, Check your balance");
         uint256 tokenId = _tokenIdCounter.current();
         tokenSerial[tokenId] = createTokenDNA(buyer, tokenId);
@@ -81,7 +83,7 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
     }
 
     function redeem(uint256 tokenId) public{
-        require(_exists(tokenId) && ownerOf(0) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
+        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
         uint256 clientToRedeem = _clientToRedeem.current();
         _clientToRedeem.increment();
         _burn(tokenId);
