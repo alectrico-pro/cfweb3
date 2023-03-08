@@ -8,7 +8,8 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/utils/Base64.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
-import './TransfersProcess.sol';
+import './ReceiveEther.sol';
+import './SendEther.sol';
 import './TokenCreation.sol';
 
 
@@ -34,16 +35,6 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
     }
 
 
-    function sendClient() public view returns(client memory){
-        return _client;
-    }
-
-    function createClient(string memory _fullName, string memory _fisicalAddress, string memory _telefone) public onlyOwner{
-        uint256 clientId = _clientId.current();
-        clientData[clientId] = client(_fullName, _fisicalAddress, _telefone);
-        _clientId.increment();
-    }
-
     constructor(uint256 _priceToPay) payable ERC721('TokenName', 'TNM'){
         priceToPay = _priceToPay;
         ownerAddress = payable(msg.sender);
@@ -64,7 +55,7 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
 
     function buyToken() public payable{
         address buyer = msg.sender;
-        require(msg.value == priceToPay, string.concat("Need to send ", Strings.toString(priceToPay), " wei"));
+        require(msg.value == priceToPay, "Need to send wei");
         require(sendEther(ownerAddress, priceToPay), "Payment Failed, Check your balance");
         uint256 tokenId = _tokenIdCounter.current();
         tokenSerial[tokenId] = createTokenDNA(buyer, tokenId);
@@ -83,7 +74,7 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
     }
 
     function redeem(uint256 tokenId) public{
-        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
+        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "Token unknown");
         uint256 clientToRedeem = _clientToRedeem.current();
         _clientToRedeem.increment();
         _burn(tokenId);
