@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Autor: alectrico.eth
 
 pragma solidity ^0.8.0;
 
@@ -34,16 +35,20 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
     bool lock = false;
     using SafeMath for uint256;
     using Counters for Counters.Counter;
+
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public constant MAX_TOKENS = 64;
-    uint256 public priceToMint;
+    uint256 public constant MAX_TOKENS = 1967;
+    uint256 public priceToMint = 7000000000000000;
+    uint256 private previous_owner_balance = 0;
 
     bool public hasSaleStarted = false;
     string baseURI;
 
     event Minted(uint256 tokenId, address owner);
     event Redeemed(uint256 tokenId);
+    event Withdrawed(uint balance, uint amount, uint owner_current_balance);
+    event SaleStarted();
 
     constructor()
         ERC721PresetMinterPauserAutoId(
@@ -60,6 +65,7 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         (bool sent, ) = owner().call{value: toWithdraw}("");
         require(sent, "Transaction failed");
         lock = false;
+        emit Withdrawed( address(this).balance, toWithdraw, address(owner()).balance);
         return sent;
     }
 
@@ -92,17 +98,20 @@ contract TokenBat is ERC721PresetMinterPauserAutoId, Ownable, ContextMixin {
         //_client = clientData[clientToRedeem];
     }
 
-
-
-
     function startSale() public onlyOwner {
         hasSaleStarted = true;
+        emit SaleStarted();
     }
-
 
     function pauseSale() public onlyOwner {
         hasSaleStarted = false;
     }
+
+
+    function getOwner() public view returns (address) {
+       return owner();
+    }
+
 
     function tokenExists(uint256 tokenId) public view returns (bool) {
         return _exists(tokenId);

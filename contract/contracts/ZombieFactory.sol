@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: UNLINCESED
+// Autor: alectrico.eth
+
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";

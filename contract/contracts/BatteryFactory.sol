@@ -1,5 +1,7 @@
-///Emisión de Batería de recarga
+///Emision de Batería de recarga
 // SPDX-License-Identifier: UNLINCESED
+// Autor: alectrico.eth
+
 pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./TokenBat.sol";
@@ -29,7 +31,7 @@ contract BatteryFactory {
         return ownerBatCount[ msg.sender ];
     }
 
-    function _crearBat(string memory _name, uint _dna) internal  {
+    function _crearBat(string memory _name, uint _dna) internal {
         // console.log("En _crearBat %s, dna: %s", _name, _dna);
         Bat memory bat = Bat(_name, _dna);
         bats.push(bat) ;

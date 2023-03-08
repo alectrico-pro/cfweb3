@@ -6,7 +6,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  const Contrato = await hre.ethers.getContractFactory("TokenBat"); 
+  const Contrato = await hre.ethers.getContractFactory("ZombieElectrico"); 
   const gasPrice = await Contrato.signer.getGasPrice();
 	
   console.log(`Current gas price: ${gasPrice}`);
@@ -27,10 +27,10 @@ async function main() {
       )}`,
     );
   }
-//  const contrato = await TokenBat.deploy();
+//const contrato = await Contrato.deploy();
   await contrato.deployed();
   console.log("Contrato deployed to:", contrato.address);
-  await contrato.setPriceToMint(7000000000000000);
+  await token_bat.setPriceToMint(7000000000000000);
   console.log("Price set to 7000000000000000 wei");
 }
 

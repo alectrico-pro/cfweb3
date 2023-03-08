@@ -184,6 +184,33 @@ describe("TokenBat accounting rules", function () {
      await expect( token_bat.connect(other).withdrawBalance()) 
                   .to.be.reverted });
 
+  it("Owner should decreases balance after withdrawal", async function () {
+     await token_bat.startSale();	  
+     await token_bat.connect(other).mintToken( other.address, {value: "2000"});
+
+     pre_balance  = await token_bat.balanceOf(token_bat.address);
+
+     console.log("Pre balance contrato ");
+     console.log(pre_balance);
+
+
+     pre_balance_owner  = await token_bat.balanceOf(owner.address);
+     console.log("Pre balance");
+     console.log(pre_balance_owner);
+        await  token_bat.connect(owner).withdrawBalance();
+     post_balance_owner = await token_bat.connect(owner).balanceOf(owner.address); 
+     console.log("Post balance");
+     console.log(post_balance_owner);
+
+     expect( pre_balance_owner).to.be.gt( post_balance_owner)
+   })
+
+  it("Other can't decreases after the withdrawal", async function () {
+    await expect( token_bat.connect(other).withdrawBalance()
+     ).to.revertedWith("Ownable: caller is not the owne" )});
+
+
+
   it("Should revert minting token when no pay", async function () {
      await expect( token_bat.mintToken( owner.address ))
                   .to.be.revertedWith('pay to mint') });

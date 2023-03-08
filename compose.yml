@@ -128,23 +128,57 @@ services:
   #debe declararse una red backend en hardhat.config.js
   deploy_token_bat: &deploy_token_bat
     <<: *app
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
-    command: "npx hardhat run scripts/deploy_token_bat.js --network backend --verbose"
+    command: "npx hardhat run scripts/deploy_token_bat.js --network mainnet --verbose"
+    networks:
+      backend:
+     #debe declararse una red backend en hardhat.config.js
+
+  #debe declararse una red backend en hardhat.config.js
+  deploy_zombie_electrico: &deploy_zombie_electrico
+    <<: *app
+    command: "npx hardhat run scripts/deploy_zombie_electrico.js --network mainnet --verbose"
     networks:
       backend:
      #debe declararse una red backend en hardhat.config.js
 
 
-  deploy_ticket_system: &deploy-ticket-system
+  #debe declararse una red backend en hardhat.config.js
+  deploy_zombie_factory: &deploy_zombie_factory
     <<: *app
-    environment:
-      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
-    command: "npx hardhat run scripts/deploy_ticket_system.js --network backend --verbose"
+    command: "npx hardhat run scripts/deploy_zombie_factory.js --network mainnet --verbose"
     networks:
       backend:
 
-  deploy_send_ether: &deploy-send_ether
+  #debe declararse una red backend en hardhat.config.js
+  deploy_battery_factory: &deploy_battery_factory
+    <<: *app
+    command: "npx hardhat run scripts/deploy_battery_factory.js --network mainnet --verbose"
+    networks:
+      backend:
+
+  #debe declararse una red backend en hardhat.config.js
+  deploy_ronda_factory: &deploy_ronda_factory
+    <<: *app
+    command: "npx hardhat run scripts/deploy_ronda_factory.js --network mainnet --verbose"
+    networks:
+      backend:
+
+  #debe declararse una red backend en hardhat.config.js
+  deploy_cfnft: &deploy_cfnft
+    <<: *app
+    command: "npx hardhat run scripts/deploy_cfnft.js --network mainnet --verbose"
+    networks:
+      backend:
+
+
+
+  deploy_ticket_system: &deploy_ticket_system
+    <<: *app
+    command: "npx hardhat run scripts/deploy_ticket_system.js --network mainnet --verbose"
+    networks:
+      backend:
+
+  deploy_send_ether: &deploy_send_ether
     <<: *app
     environment:
       dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
@@ -152,6 +186,17 @@ services:
     networks:
       backend:
 
+  deploy_ticket_system: &deploy_ticket_system
+    <<: *app
+    command: "npx hardhat run scripts/deploy_ticket_system.js --network mainnet --verbose"
+    networks:
+      backend:
+
+  deploy_tickets: &deploy_tickets
+    <<: *app
+    command: "npx hardhat run scripts/deploy_tickets.js --network mainnet --verbose"
+    networks:
+      backend:
 
 
 
