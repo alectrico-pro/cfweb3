@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Autor: alectrico.eth
 
 pragma solidity ^0.8.0;
 

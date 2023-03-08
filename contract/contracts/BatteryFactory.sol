@@ -1,5 +1,7 @@
-///Emisión de Batería de recarga
+///Emision de Batería de recarga
 // SPDX-License-Identifier: UNLINCESED
+// Autor: alectrico.eth
+
 pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./TokenBat.sol";

@@ -1,5 +1,7 @@
 //Es un zombie alimentado por baterías
 //SPDX-License-Identifier: GPL-30
+//Autor: alectrico.eth
+
 pragma solidity ^0.8.0;
 import "./ZombieFactory.sol";
 import "./BatteryFactory.sol";
