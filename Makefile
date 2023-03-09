@@ -20,6 +20,9 @@ zombie_factory:
 battery_factory:
 	docker compose run deploy_battery_factory
 
+deploy_battery_factory_local:
+	docker compose run deploy_battery_factory_local
+
 
 ronda_factory:
 	docker compose run deploy_ronda_factory
@@ -47,3 +50,4 @@ mainnet:
 .PHONY: frontend
 frontend:
 	docker compose run frontend
+

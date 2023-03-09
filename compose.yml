@@ -160,6 +160,16 @@ services:
       backend:
 
   #debe declararse una red backend en hardhat.config.js
+  deploy_battery_factory_local: &deploy_battery_factory_local
+    <<: *app
+    command: "npx hardhat run scripts/deploy_battery_factory.js --network backend --verbose"
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+    networks:
+      backend:
+
+
+  #debe declararse una red backend en hardhat.config.js
   deploy_ronda_factory: &deploy_ronda_factory
     <<: *app
     command: "npx hardhat run scripts/deploy_ronda_factory.js --network mainnet --verbose"
@@ -279,6 +289,7 @@ services:
       - -- host
     networks:
       backend:
+
 
 
   #------------- worker de cloudflare que gestiona la imagen del token nft

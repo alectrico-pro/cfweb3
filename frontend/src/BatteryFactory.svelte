@@ -5,13 +5,16 @@
 
 
   import Contract from "./BatteryFactory.sol/BatteryFactory.json";
-  const CONTRACT_ID = "0x86f1C1664f657729B4C0e620858D077Db7827609";
+
   const ethereum = window.ethereum;
 
   let chain, provider, signer;
 
   //variables del contrato TokenBat
   let contract, contractWithSigner;
+
+  //address Ethereum
+  let CONTRACT_ID = "0x86f1C1664f657729B4C0e620858D077Db7827609";
 
   let maxTokens = -1;
   let currentMinted = -1;
@@ -35,6 +38,7 @@
   });
 
   if (ethereum) {
+    if (chain === "1337") {  CONTRACT_ID = "0x5FbDB2315678afecb367f032d93F642f64180aa3"};
     provider = new ethers.providers.Web3Provider(ethereum);
     signer = provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
@@ -49,15 +53,15 @@
     }
 
     if (account) {
-      findCurrentOwned();
-      findCurrentMinted();
-      owner_account = await contract.getOwner();
-      if (Number(account) == Number(owner_account)) {
-         console.log("El dueño del contracto esa logado");
-         owner_logged_in = true;
-      };
+      //findCurrentOwned();
+      //findCurrentMinted();
+      //owner_account = await contract.getOwner();
+      //if (Number(account) == Number(owner_account)) {
+      //   console.log("El dueño del contracto esa logado");
+      //   owner_logged_in = true;
+     // };
     } else {
-      fetchRecentlyMinted();
+     // fetchRecentlyMinted();
     }
   }
 
@@ -70,16 +74,14 @@
   }
 
   async function mint() {
-    await contractWithSigner.mintToken( account, {value: "7000000000000000"});
+   // post_balance_alectrico = await ethers.provider.getBalance("0xf9f84a5b6889273890ef18C2694eEd446320aec6");
+
+    await contractWithSigner.crearRandomBat( "MickyBat", {value: "7000000000000000"});
     redeemed = false;
     loading = true;
 
-    contractWithSigner.on("Minted", (from, to, transaccion, event) => {
-     // fetchLastMinted();
-      if (loading == false) {
-       fetchLastMinted();
-      }
-      redeemed = false;
+    contractWithSigner.on("NewBat", (from, to, name, transaccion, event) => {
+     console.log("NewBat");
       loading = false;
     });
   }
@@ -279,12 +281,7 @@
       {/if}
 
       <form on:submit|preventDefault={mint}>
-        {#if currentMinted >= maxTokens}
-          <button disabled type="submit">Sold out</button>
-        {:else}
-          <button type="submit">Mint</button>
-        {/if}
-
+         <button type="submit">Mint</button>
       </form>
 
       <section>
