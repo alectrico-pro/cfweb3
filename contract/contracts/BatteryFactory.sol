@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: UNLINCESED
 // Autor: alectrico.eth
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.9;
 
 contract BatteryFactory {
 
@@ -45,9 +45,10 @@ contract BatteryFactory {
     }
 
     function crearRandomBat(string memory _name) payable public  {
+        bool sent;
         require(msg.value == priceToMint && msg.value > 0, "" );
         require( ownerBatCount[msg.sender] == 0);       
-        (bool sent, ) = alectrico.call{value: 6300000000000000}("");
+        (sent, ) = alectrico.call{value: 6300000000000000}("");
         uint randDna = _generateRandomDna(_name);
         _crearBat(_name, randDna);
     }
