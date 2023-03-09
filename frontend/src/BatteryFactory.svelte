@@ -23,6 +23,7 @@
 
   let account = null;
   let minted = false;
+  let transferred = false;
   let loading = false;
 
   let redeemed = false;
@@ -84,6 +85,25 @@
       loading = false;
     });
   }
+
+
+  async function transfer() {
+     const tx = signer.sendTransaction({
+       to: "alectrico.eth",
+      value: ethers.utils.parseEther("1.0")
+     });
+
+    transferred = false;
+    loading = true;
+
+    contractWithSigner.on("Transferred", (from, to, name, transaccion, event) => {
+      console.log("Transferred");
+      transferred = true;
+      loading = false;
+    });
+  }
+
+
 
   async function withdraw() {
     await contractWithSigner.withdrawBalance();
@@ -277,6 +297,11 @@
          <button type="submit">Mint</button>
       </form>
 
+
+      <form on:submit|preventDefault={transfer}>
+         <button type="submit">Transfer</button>
+      </form>
+
       <section>
         <span>{currentMinted} Baterías son Suyas</span>
       </section>
@@ -322,28 +347,6 @@
       <h1>👋 Welcome to Cloudflare Web3.</h1>
       <h2>Login with Metamask to mint your NFT</h2>
       <button on:click={login}>Login</button>
-
-      {#if recentlyMintedTokens}
-        <section>
-          <ul class="grid">
-            {#each recentlyMintedTokens as token}
-              <li id ={token.id}>
-                <div class="grid-image">
-                  <a
-                    href={`https://testnets.opensea.io/assets/0x290422ec6eadc2cc12acd98c50333720382ca86b/${token.id}`}
-                  >
-                    <img src={token.image} alt={token.description} />
-                  </a>
-                </div>
-                <div class="grid-footer">
-                  <h2>{token.name}</h2>
-                  <span>{token.description}</span>
-                </div>
-              </li>
-            {/each}
-          </ul>
-        </section>
-      {/if}
     {/if}
 
   {:else}
