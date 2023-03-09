@@ -15,10 +15,9 @@
   //variables del contrato BatteryFactoryt
   let contract, contractWithSigner;
 
-  let CONTRACT_ID = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
-
-  let maxTokens = -1;
-  let currentMinted = -1;
+  let CONTRACT_ID;
+  let maxTokens = 0;
+  let currentMinted = 0;
   let ownedTokens = [];
   let recentlyMintedTokens = [];
 
@@ -36,14 +35,17 @@
 
   onMount(() => {
     chain = window.ethereum.networkVersion;
-    console.log( chain );
   });
 
   if (ethereum) {
-    if (chainId === "1337") {
-      CONTRACT_ID = "0x5fbdb2315678afecb367f032d93f642f64180aa3" }
-    else {
-      CONTRACT_ID = "0x86f1C1664f657729B4C0e620858D077Db7827609" };
+    if (chainId === "1") {
+      CONTRACT_ID = "0x86f1C1664f657729B4C0e620858D077Db7827609"
+    };
+    if ( chainId === "1337" || chainId == null) {
+      CONTRACT_ID = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+    };
+
+
     provider = new ethers.providers.Web3Provider(ethereum);
     signer = provider.getSigner();
     contract = new ethers.Contract(CONTRACT_ID, Contract.abi, provider);
@@ -57,13 +59,7 @@
     }
 
     if (account) {
-      //findCurrentOwned();
       findCurrentMinted();
-      //owner_account = await contract.getOwner();
-      //if (Number(account) == Number(owner_account)) {
-      //   console.log("El dueño del contracto esa logado");
-      //   owner_logged_in = true;
-     // };
     } else {
       fetchRecentlyMinted();
     }
@@ -156,23 +152,11 @@
   }
 
 
-  async function findCurrentOwned() {
-
-    const numberOfTokensOwned = await contract.balanceOf(account);
-    for (let i = 0; i < Number(numberOfTokensOwned); i++) {
-      const token    = await contract.tokenOfOwnerByIndex(account, i);
-      const URI      = await contract.tokenURI(token);
-      const response = await fetch(URI);
-      const result   = await response.json();
-      result.id      = token;
-      ownedTokens.push(result);
-    }
-    ownedTokens = ownedTokens;
-  }
 
   async function findCurrentMinted() {
     const supply = await provider.getBalance(account) / 1000000000000000000;
-    currentMinted = await contractWithSigner.cuantasBateriasHay();
+    currentMinted = await contract.cuantasBateriasHay();
+    
     console.log(currentMinted);
 
   }
@@ -238,23 +222,25 @@
     <li><a href="https://github.com/signalnerve/cfweb3">GitHub</a></li>
   </ul>
 </header>
-{#if chain == null}
-  <div class="error">
-    Sorry we had trouble connecting to the a blockchain. Try to refresh and install MetaMask. 
-  </div>
-{:else}
-
-  {#if chain === "1337"}
+  {#if  chain === "1337"}
     <div class="warning">
       This marketplace is connected to the Local test network.
     </div>
-  {:else}
-    <div class="error">
-      This application requires you to be on the Local test network. Use Metamask to
-      switch networks.
+  {/if}
+
+  {#if  chain === "1"}
+    <div class="warning">
+      This marketplace is connected to Mainnet.
     </div>
   {/if}
-{/if}
+
+  {#if  chain == null}
+    <div class="danger">
+      We don't now what is the network.
+    </div>
+  {/if}
+
+
 
 <main>
   {#if ethereum}
@@ -302,10 +288,6 @@
        {#if ethereum}
           <section>
              <button on:click={withdraw}>WithDraw</button>
-             {#if sale_started}
-             {:else}
-               <button on:click={start_sale}>Start Sale</button>
-             {/if}
            </section>
         {/if}
       {/if}
