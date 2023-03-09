@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: UNLINCESED
 // Autor: alectrico.eth
 
+import "hardhat/console.sol";
+
 pragma solidity ^0.8.9;
 
 contract BatteryFactory {
@@ -27,6 +29,7 @@ contract BatteryFactory {
     mapping( address => uint ) ownerBatCount;
 
     function cuantasBateriasHay() public view returns (uint)  {
+        console.log("En cuantasBateriasHay");
         return ownerBatCount[ msg.sender ];
     }
 
@@ -46,8 +49,8 @@ contract BatteryFactory {
 
     function crearRandomBat(string memory _name) payable public  {
         bool sent;
-        require(msg.value == priceToMint && msg.value > 0, "" );
-        require( ownerBatCount[msg.sender] == 0);       
+        require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
+        require( ownerBatCount[msg.sender] == 0, "solo una bateria por vez");       
         (sent, ) = alectrico.call{value: 6300000000000000}("");
         uint randDna = _generateRandomDna(_name);
         _crearBat(_name, randDna);
