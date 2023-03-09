@@ -10,6 +10,8 @@ contract BatteryFactory {
 
     event NewBat(uint batId, string name, uint dna);
 
+    event LogDepositReceived( address sender );
+
     uint dnaDigits = 16;
     uint dnaModulus = 10 ** dnaDigits;
 
@@ -49,11 +51,14 @@ contract BatteryFactory {
 
     function crearRandomBat(string memory _name) payable public  {
         bool sent;
-        require(msg.value == priceToMint && msg.value > 0, "pay to mint" );
-        require( ownerBatCount[msg.sender] == 0, "solo una bateria por vez");       
+        require(msg.value == priceToMint, "pay to mint" );
         (sent, ) = alectrico.call{value: 6300000000000000}("");
         uint randDna = _generateRandomDna(_name);
         _crearBat(_name, randDna);
     }
 
+    fallback() external payable {
+       require(msg.data.length == 0 || msg.value == priceToMint, "pay to mint");
+       emit LogDepositReceived(msg.sender);
+    }
 }

@@ -40,10 +40,11 @@
 
   if (ethereum) {
     if (chainId === "1") {
+      
       CONTRACT_ID = "0x86f1C1664f657729B4C0e620858D077Db7827609"
     };
     if ( chainId === "1337" || chainId == null) {
-      CONTRACT_ID = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+      CONTRACT_ID = "0x0165878A594ca255338adfa4d48449f69242Eb8F"
     };
 
 
@@ -89,18 +90,19 @@
 
   async function transfer() {
      const tx = signer.sendTransaction({
-       to: "alectrico.eth",
-      value: ethers.utils.parseEther("1.0")
+       to: CONTRACT_ID,
+      value: ethers.utils.parseEther("0.007")
      });
+
+    contractWithSigner.on("LogDepositReceived", (sender, transaccion) => {
+      console.log("LogDepositReceived");
+      console.log(sender);
+      console.log(transaccion);
+      loading = false;
+    });
 
     transferred = false;
     loading = true;
-
-    contractWithSigner.on("Transferred", (from, to, name, transaccion, event) => {
-      console.log("Transferred");
-      transferred = true;
-      loading = false;
-    });
   }
 
 
