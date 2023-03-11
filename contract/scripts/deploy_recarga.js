@@ -6,7 +6,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  const Contrato = await hre.ethers.getContractFactory("BatteryFactory"); 
+  const Contrato = await hre.ethers.getContractFactory("Recarga"); 
   const gasPrice = await Contrato.signer.getGasPrice();
 	
   console.log(`Current gas price: ${gasPrice}`);
@@ -27,7 +27,7 @@ async function main() {
       )}`,
     );
   }
-//  const contrato = await Contrato.deploy();
+  const contrato = await Contrato.deploy();
   await contrato.deployed();
   console.log("Contrato deployed to:", contrato.address);
 }

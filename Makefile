@@ -20,11 +20,15 @@ zombie_factory:
 battery_factory:
 	docker compose run deploy_battery_factory
 
+recarga:
+	docker compose run deploy_recarga
+
+
 deploy_battery_factory_local:
 	docker compose run deploy_battery_factory_local
 
 deploy:
-	make deploy_battery_factory_local
+	make battery_factory
 
 
 ronda_factory:

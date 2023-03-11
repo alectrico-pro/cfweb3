@@ -41,7 +41,7 @@
 
   if (ethereum) {
     if (chainId === "1") {
-      CONTRACT_ID = "0x86f1C1664f657729B4C0e620858D077Db7827609"
+      CONTRACT_ID= "0xC3D2351f4a2e14cbf86Ab816B1e39dfEB61EC8C6"
       ALECTRICO_ETH="alectrico.eth"
 
     };

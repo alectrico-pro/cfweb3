@@ -160,6 +160,16 @@ services:
       backend:
 
   #debe declararse una red backend en hardhat.config.js
+  deploy_recarga: &deploy_recarga
+    <<: *app
+    command: "npx hardhat run scripts/deploy_recarga.js --network mainnet --verbose"
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+    networks:
+      backend:
+
+
+  #debe declararse una red backend en hardhat.config.js
   deploy_battery_factory_local: &deploy_battery_factory_local
     <<: *app
     command: "npx hardhat run scripts/deploy_battery_factory.js --network backend --verbose"
