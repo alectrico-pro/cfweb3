@@ -67,6 +67,7 @@
     });
     account = accounts[0];
     init();
+   
   }
 
 
@@ -76,6 +77,8 @@
        value: ethers.utils.parseEther("0.007")
      });
 
+     loading = true;
+
     contractWithSigner.on("LogDepositReceived", ( from, event) => {
       console.log("LogDepositReceived");
 
@@ -83,62 +86,10 @@
             from: from,
             eventData: event,
         }
-        console.log(JSON.stringify(transferEvent, null, 4))
-
-      loading = false;
+        console.log(JSON.stringify(transferEvent, null, 4));
+        loading = false;
     });
 
-    let lastTransferEvent = await contract.queryFilter({
-      topics: [ ]
-    });
-
-    await lastTransferEvent.map(async (TransferEvent) => {
-      console.log( "En lastTransferEvent" );
-      console.log( TransferEvent );
-    });
-
-    transferred = false;
-    loading = true;
-  }
-
-  async function transfer_me() {
-
-    const tx = signer.sendTransaction({
-     to: ALECTRICO_ETH,
-    value: ethers.utils.parseEther("0.000001")
-   });
-
-    contractWithSigner.on("LogDepositReceived", (sender, transaccion) => {
-      console.log("LogDepositReceived");
-      console.log(sender);
-      console.log(transaccion);
-      loading = false;
-    });
-
-    transferred = false;
-    loading = true;
-  }
-
-
-
-  async function withdraw() {
-    await contractWithSigner.withdrawBalance();
-    withdrawed= false;
-    loading = true;
-
-    contractWithSigner.on("Withdrawed", (from, to, balance, transaccion, event) => {
-      console.log("Withdrawed");
-      console.log("Amount withdrawed from the contract:");
-      console.log(0.000000000000000001 * Number(transaccion.args.amount));
-      console.log("Current Contract's balance:");
-      console.log(0.000000000000000001 * Number(transaccion.args.balance));
-
-      console.log("Current Owner's Account balance:");
-      console.log(0.000000000000000001 * Number(transaccion.args.owner_current_balance));
-
-      redeemed = false;
-      loading = false;
-    });
   }
 
 
@@ -217,9 +168,11 @@
   <br><br>
   {#if ethereum}
     {#if account}
+
       {#if loading}
-        <h2>Transaction processing...</h2>
+      <a class="btn btn-primary-outline display-4" ><span class="mbri-clock mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a>
       {/if}
+
        <div class="mbr-section-btn mt-3">
          <form on:submit|preventDefault={transfer}>
           <button class= "btn btn-primary display-4" type="submit">
@@ -229,7 +182,7 @@
       </div>
       <br><br>
       <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
-      👋 Hola, seleccione ETHER para pagar por la Visita en Providencia</h2>
+      👋 Hola, dónenos algo de ETHER para contactarle con un electricista para una Visita en Providencia. Esto no cubre los costos de la Visita. Eso debe acordarlo directamente con el Electricista como un tema entre privados.</h2>
 
     {:else}
       <div class="mbr-section-btn mt-3">
@@ -240,7 +193,7 @@
 
       <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://alectrica.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
                 <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
-                  Esta app acepta pagos en ETHER usando MetMask </h2>
+                  Esta app acepta pagos en ETHER usando MetaMask. </h2>
 
 
   {/if}
@@ -315,6 +268,7 @@
 </main>
 
 <footer> 
-  Hecho en Chile por alectrico ® 
+  Hecho en Chile por alectrico ®.
+  alectrico es marca registrada de la empresa alectrico Spa. 
   Todos los derechos reservados.
 </footer>
