@@ -1,18 +1,15 @@
 <script>
 
-  import { ethers } from "ethers";
+  import { ethers  } from "ethers";
   import { onMount } from "svelte";
 
-
-  import Contract from "./BatteryFactory.sol/BatteryFactory.json";
+  import Contract from "./Recarga.sol/Recarga.json";
 
   const ethereum = window.ethereum;
 
-  let chainId = ethereum.networkVersion
+  let chainId, chain, provider, signer;
 
-  let chain, provider, signer;
-
-  //variables del contrato BatteryFactoryt
+  //variables del contrato Recarga
   let contract, contractWithSigner;
 
   let CONTRACT_ID;
@@ -41,15 +38,12 @@
 
   if (ethereum) {
     if (chainId === "1") {
-      CONTRACT_ID= "0xC3D2351f4a2e14cbf86Ab816B1e39dfEB61EC8C6"
-      ALECTRICO_ETH="alectrico.eth"
-
+      CONTRACT_ID= "0x5fbdb2315678afecb367f032d93f642f64180aa3";
+      ALECTRICO_ETH= "0xf9f84a5b6889273890ef18C2694eEd446320aec6"
     };
     if ( chainId === "1337" || chainId == null) {
-      CONTRACT_ID = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-      //Cualquier cuenta de esta blockchain
-      ALECTRICO_ETH="0x932ad06209193e5151dC0E869518a13187e332d4"
-
+      CONTRACT_ID= "0x5fbdb2315678afecb367f032d93f642f64180aa3";
+      ALECTRICO_ETH= "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
     };
 
 
@@ -65,11 +59,6 @@
       account = ethereum.selectedAddress;
     }
 
-    if (account) {
-      findCurrentMinted();
-    } else {
-      fetchRecentlyMinted();
-    }
   }
 
   async function login() {
@@ -80,23 +69,11 @@
     init();
   }
 
-  async function mint() {
-
-    await contractWithSigner.crearRandomBat( "MickyBat", {value: "7000000000000000"});
-    redeemed = false;
-    loading = true;
-
-    contractWithSigner.on("NewBat", (from, to, name, transaccion, event) => {
-     console.log("NewBat");
-      loading = false;
-    });
-  }
-
 
   async function transfer() {
      const tx = signer.sendTransaction({
        to: CONTRACT_ID,
-      value: ethers.utils.parseEther("0.007")
+       value: ethers.utils.parseEther("0.007")
      });
 
     contractWithSigner.on("LogDepositReceived", ( from, event) => {
@@ -111,13 +88,11 @@
       loading = false;
     });
 
-    let lastTransfertEvent = await contract.queryFilter({
-      topics: [
-       "0x15382559391789f1865e10e9c8b51327a9cb0381eae89973ada229e7a78c08f3",
-      ],
+    let lastTransferEvent = await contract.queryFilter({
+      topics: [ ]
     });
 
-    await lastTransfertEvent.map(async (TransferEvent) => {
+    await lastTransferEvent.map(async (TransferEvent) => {
       console.log( "En lastTransferEvent" );
       console.log( TransferEvent );
     });
@@ -127,10 +102,11 @@
   }
 
   async function transfer_me() {
-     const tx = signer.sendTransaction({
-       to: ALECTRICO_ETH,
-      value: ethers.utils.parseEther("0.000001")
-     });
+
+    const tx = signer.sendTransaction({
+     to: ALECTRICO_ETH,
+    value: ethers.utils.parseEther("0.000001")
+   });
 
     contractWithSigner.on("LogDepositReceived", (sender, transaccion) => {
       console.log("LogDepositReceived");
@@ -165,256 +141,180 @@
     });
   }
 
-  async function start_sale() {
-    await contractWithSigner.startSale();
-    sale_started = false;
-    loading = true;
 
-    contractWithSigner.on("SaleStarted", (from, to, transaccion, event) => {
-      sale_started = true;
-      loading = false;
-      cosole.log("Sale Started");
-    });
-  }
-
-
-
-  async function redeem(token_id) {
-    const id= "token_"+token_id;
-    const elemento = document.getElementById(id);
-    elemento.replaceWith("");
-    await contractWithSigner.redeemToken(token_id);
-    minted = false;
-    loading = true;
-
-    contractWithSigner.on("Redeemed", (from, to, amount, event) => {
-      loading = false;
-      currentMinted -= 1;
-      ownedTokens = ownedTokens;
-      redeemed = true;
-    });
-  }
-
-
-  async function updateCurrentOwned() {
-    ownedTokens = [];
-    const numberOfTokensOwned = await contract.balanceOf(account);
-    for (let i = 0; i < Number(numberOfTokensOwned); i++) {
-      const token    = await contract.tokenOfOwnerByIndex(account, i);
-      const URI      = await contract.tokenURI(token);
-      const response = await fetch(URI);
-      const result   = await response.json();
-      result.id      = token;
-      ownedTokens.push(result);
-    }
-    currentMinted = ownedTokens.length;
-    ownedTokens = ownedTokens;
-  }
-
-
-
-  async function findCurrentMinted() {
-    const supply = await provider.getBalance(account) / 1000000000000000000;
-    currentMinted = await contract.cuantasBateriasHay();
-    
-    console.log(currentMinted);
-
-  }
-
-  // tpic original NO BORRAR -"0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
-
-  async function fetchRecentlyMinted() {
-    let recentMintEvents = await contract.queryFilter({
-      topics: [
-       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
-      ],
-    });
-
-    recentMintEvents = recentMintEvents.slice(-3);
-
-    await recentMintEvents.map(async (MintEvent) => {
-      console.log( "En recentMintEvents" );
-      const token = MintEvent.args.tokenId;
-      const URI = await contract.tokenURI(token);
-      const response = await fetch(URI);
-
-      const result = await response.json();
-      result.id = token;
-
-      recentlyMintedTokens.push(result);
-      recentlyMintedTokens = recentlyMintedTokens;
-    });
-  }
-
-
-  async function fetchLastMinted() {
-    let lastMintEvent = await contract.queryFilter({
-      topics: [
-       "0xb9203d657e9c0ec8274c818292ab0f58b04e1970050716891770eb1bab5d655e",
-      ],
-    });
-
-    lastMintEvent = lastMintEvent.slice(-1);
-
-    await lastMintEvent.map(async (MintEvent) => {
-      console.log( "En lastMintEvent" );
-      const token = MintEvent.args.tokenId;
-
-      if ( ! document.getElementById( token ) ) {
-        const URI = await contract.tokenURI(token);
-        const response = await fetch(URI);
-        const result = await response.json();
-        result.id = token;
-        ownedTokens.push(result);
-        ownedTokens = ownedTokens;
-      }
-    });
-  }
 
 </script>
 
 
 <header>
-  <a href="/">Cloudflare Web3</a>
-  <ul>
-    <li>
-      <a href="https://testnets.opensea.io/collection/cfnft">View on OpenSea</a>
-    </li>
-    <li><a href="https://github.com/signalnerve/cfweb3">GitHub</a></li>
-  </ul>
-</header>
-  {#if  chain === "1337"}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image:src" content="assets/images/index-meta.png">
+  <meta property="og:image" content="assets/images/index-meta.png">
+  <meta name="twitter:title" content="Electricista a Domicilio Providencia">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="assets/images/locoalicate-96x155.png" type="image/x-icon">
+  <meta name="description" content="Electricista a Domicilio Providencia">
+
+  <title>Electricista a Domicilio Providencia</title>
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons2/mobirise2.css">
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons/mobirise-icons.css">
+  <link rel="stylesheet" href="assets/tether/tether.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="assets/animatecss/animate.css">
+  <link rel="stylesheet" href="assets/socicon/css/styles.css">
+  <link rel="stylesheet" href="assets/theme/css/style.css">
+  <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css" type="text/css">
+
+  <section class="menu menu2 cid-sewGNRqCZx" once="menu" id="menu2-2">
+
+    <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="https://alectrica.cl">
+                        <img src="assets/images/locoalicate-96x155.png" alt="alectrica" style="height: 3rem;">
+                    </a>
+                </span>
+                <span class="navbar-caption-wrap"><a class="navbar-caption text-white text-primary display-4" href="#top">ALECTRICA</a></span>
+            </div>
+        </div>
+    </nav>
+</section>
+
+<section class="header1 cid-sewsPSgeos mbr-parallax-background" id="header1-1">
+
+
+
+
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-11">
+                <h1 class="mbr-section-title mbr-fonts-style mb-3 display-4"><strong><em>Electricistas a Domicilio </em></strong><br><strong><em>- en Providencia -</em></strong></h1>
+                <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">Misión: Ayudar a proteger la vida y la propiedad</h2>
+  {#if  (chain === "1337")}
     <div class="warning">
-      This marketplace is connected to the Local test network.
+      Conectado a la red local.
     </div>
   {/if}
 
   {#if  chain === "1"}
     <div class="warning">
-      This marketplace is connected to Mainnet.
+      Conectado a la BlockChain.
     </div>
   {/if}
 
   {#if  chain == null}
     <div class="danger">
-      We don't now what is the network.
     </div>
   {/if}
 
+  <br><br>
+  {#if ethereum}
+    {#if account}
+      {#if loading}
+        <h2>Transaction processing...</h2>
+      {/if}
+       <div class="mbr-section-btn mt-3">
+         <form on:submit|preventDefault={transfer}>
+          <button class= "btn btn-primary display-4" type="submit">
+<span class="mbri-cash mbr-iconfont mbr-iconfont-btn" style="font-size: 144px;">
+</span> 0.007 ETHER </button>
+         </form>
+      </div>
+      <br><br>
+      <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
+      👋 Hola, seleccione ETHER para pagar por la Visita en Providencia</h2>
+
+    {:else}
+      <div class="mbr-section-btn mt-3">
+      <a class="btn btn-primary-outline display-4" on:click={login} ><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
+
+     {/if}
+  {:else}
+
+      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://alectrica.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
+                <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
+                  Esta app acepta pagos en ETHER usando MetMask </h2>
+
+
+  {/if}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="features24 cid-sex0CusJkd" id="features1-b">
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="card col-12 col-md-6 col-lg-3">
+                <div class="card-wrapper">
+                    <div class="card-box align-center">
+                        <div class="iconfont-wrapper">
+                            <span class="mbr-iconfont mbri-idea"></span>
+                        </div>
+                        <h5 class="card-title mbr-fonts-style display-7"><strong>Instalación</strong></h5>
+                        <p class="card-text mbr-fonts-style display-5">Aléctrica ofrece el servicio de instalación de luminarias y enchufes.</p>
+                    </div>
+                </div>
+            </div>
+
+
+           <div class="card col-12 col-md-6 col-lg-3">
+                <div class="card-wrapper">
+                    <div class="card-box align-center">
+                        <div class="iconfont-wrapper">
+                            <span class="mbr-iconfont mbri-setting3"></span>
+                        </div>
+                        <h5 class="card-title mbr-fonts-style display-7"><strong>Reparación</strong></h5>
+                        <p class="card-text mbr-fonts-style display-5">Aléctrica atiende reparaciones de fallas por cortocircuito, disparos intempestivos por sobrecalentamiento y fallas a tierra capaces de activar diferenciales.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-12 col-md-6 col-lg-3">
+                <div class="card-wrapper">
+                    <div class="card-box align-center">
+                        <div class="iconfont-wrapper">
+                            <span class="mbr-iconfont mbri-setting"></span>
+                        </div>
+                        <h5 class="card-title mbr-fonts-style display-7"><strong>Ampliación</strong></h5>
+                        <p class="card-text mbr-fonts-style display-5">Aléctrica puede atender modificaciones y ampliaciones de una instalación eléctrica existente realizando primeramente un estudio de la situación.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-12 col-md-6 col-lg-3">
+                <div class="card-wrapper">
+                    <div class="card-box align-center">
+                        <div class="iconfont-wrapper">
+                            <span class="mbr-iconfont mobi-mbri-sites mobi-mbri"></span>
+                        </div>
+                        <h5 class="card-title mbr-fonts-style display-7"><strong>TE1</strong></h5>
+                        <p class="card-text mbr-fonts-style display-5">Aléctrica certifica sus trabajos cuando sea necesario y también el de otras empresas luego que haya medido y verificado que cada detalle de la instalación cumpla la normativa eléctrica.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+</header>
 
 
 <main>
-  {#if ethereum}
-    {#if account}
-      <h1>👋 Welcome to the Cloudflare Web3 app</h1>
-      <h2>You are currently logged in as {account.slice(0, 5)}</h2>
-      {#if sale_started} <h3> Sale Started </h3> {/if}
-      {#if loading}
-        <p>Transaction processing...</p>
-      {/if}
-      {#if minted}
-        <p>
-          You minted an NFT! If you haven't already, add a new asset to Metamask
-          using the below info
-        </p>
-        <ul>
-          <li>Contract address: {CONTRACT_ID}</li>
-          <li>Token symbol: TokenBat</li>
-          <li>Token decimal: 0</li>
-        </ul>
-      {/if}
-      {#if redeemed}
-        <p>
-          You redeemed an NFT! 
-        </p>
-        <ul>
-          <li>Contract address: {CONTRACT_ID}</li>
-          <li>Token symbol: TokenBat</li>
-          <li>Token decimal: 0</li>
-        </ul>
-      {/if}
-
-      <form on:submit|preventDefault={mint}>
-         <button type="submit">Mint</button>
-      </form>
-
-
-      <form on:submit|preventDefault={transfer}>
-         <button type="submit">Transfer</button>
-      </form>
-
-
-      <form on:submit|preventDefault={transfer_me}>
-         <button type="submit">Transfer Me</button>
-      </form>
-
-      <section>
-        <span>{currentMinted} Baterías son Suyas</span>
-      </section>
-
-      <h2>Your Tokens:</h2>
-
-      {#if owner_logged_in}
-       <h1>Owner Logged In</h1>
-       {#if ethereum}
-          <section>
-             <button on:click={withdraw}>WithDraw</button>
-           </section>
-        {/if}
-      {/if}
-
-      {#if ownedTokens}
-        <section>
-          <ul class="grid">
-            {#each ownedTokens as token}
-              <li id="token_{token.id}">
-                <div class="grid-image">
-                  <img src={token.image} alt={token.description} />
-                </div>
-                <div class="grid-footer">
-                  <h2>{token.name}</h2>
-                  <h2>{token.id} </h2>
-                  <span>{token.description}</span>
-                  <form on:submit|preventDefault={redeem(token.id)}>
-                    <button type="submit">Redeem</button>
-                  </form>
-                </div>
-              </li>
-            {/each}
-          </ul>
-        </section>
-      {:else}
-        <section>
-          No tienes ningún tokenBAT. Compra uno con el botón Acuñar.
-        </section>
-      {/if}
-
-    {:else}
-      <h1>👋 Welcome to Cloudflare Web3.</h1>
-      <h2>Login with Metamask to mint your NFT</h2>
-      <button on:click={login}>Login</button>
-    {/if}
-
-  {:else}
-    <h1>This app requires a Metamask wallet.</h1>
-    <p>
-      You won't be asked to add any money. Install Metamask
-      <a href="https://metamask.io/">here</a>.
-    </p>
-    <p>
-      Then follow <a href="https://github.com/cloudflare/cfweb3"
-        >these instructions</a
-      > to get started.
-    </p>
-  {/if}
-
 </main>
 
-<footer>
-  Built with <a href="https://pages.dev">Pages</a>
-  and <a href="https://workers.dev">Workers</a>, and open-source
-  <a href="https://github.com/cloudflare/cfweb3">on GitHub</a>.
-  <a href="https://blog.cloudflare.com/get-started-web3"
-    >Read the announcement blog post</a
-  >.
+<footer> 
+  Hecho en Chile por alectrico ® 
+  Todos los derechos reservados.
 </footer>

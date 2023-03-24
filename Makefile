@@ -24,11 +24,15 @@ recarga:
 	docker compose run deploy_recarga
 
 
+recarga_local:
+	docker compose run deploy_recarga_local
+
+
 deploy_battery_factory_local:
 	docker compose run deploy_battery_factory_local
 
 deploy:
-	make battery_factory
+	make recarga_local
 
 
 ronda_factory:
