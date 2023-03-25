@@ -144,8 +144,8 @@
         <div class="container">
             <div class="navbar-brand">
                 <span class="navbar-logo">
-                    <a href="https://alectrica.cl">
-                        <img src="assets/images/locoalicate-96x155.png" alt="alectrica" style="height: 3rem;">
+                    <a href="https://aelectrico.cl">
+                        <img src="assets/images/locoalicate-96x155.png" alt="aelectrico" style="height: 3rem;">
                     </a>
                 </span>
                 <span class="navbar-caption-wrap"><a class="navbar-caption text-white text-primary display-4" href="#top">ALECTRICA</a></span>
@@ -221,7 +221,7 @@
      {/if}
   {:else}
 
-      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://alectrica.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
+      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://aelectrico.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
                 <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                   Esta app acepta pagos en ETHER usando MetaMask. </h2>
 
@@ -281,7 +281,7 @@
                         <div class="iconfont-wrapper">
                             <span class="mbr-iconfont mobi-mbri-sites mobi-mbri"></span>
                         </div>
-                        <h5 class="card-title mbr-fonts-style display-7"><strong>TE1</strong></h5>
+                        <h5 class="card-title mbr-fonts-style display-7"><strong>Certificación</strong></h5>
                         <p class="card-text mbr-fonts-style display-5">Aléctrica certifica sus trabajos cuando sea necesario y también el de otras empresas luego que haya medido y verificado que cada detalle de la instalación cumpla la normativa eléctrica.</p>
                     </div>
                 </div>
