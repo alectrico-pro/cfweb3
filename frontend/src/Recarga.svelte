@@ -24,6 +24,7 @@
   let transferred = false;
   let loading = false;
 
+  let subscribe_url = "http://localhost";
   let redeemed = false;
   let withdrawed = false;
 
@@ -72,12 +73,14 @@
 
 
   async function transfer() {
+
      const tx = signer.sendTransaction({
        to: CONTRACT_ID,
        value: ethers.utils.parseEther("0.007")
      });
 
-     loading = true;
+    loading = true;
+    transferred = false;
 
     contractWithSigner.on("LogDepositReceived", ( from, event) => {
       console.log("LogDepositReceived");
@@ -87,11 +90,25 @@
             eventData: event,
         }
         console.log(JSON.stringify(transferEvent, null, 4));
+  
         loading = false;
+        transferred = true;
     });
 
   }
 
+
+  async function subscribe() {
+
+
+    loading = true;
+    transferred = false;
+
+    const response = await fetch(subscribe_url)
+    const result = await response.json();
+
+
+  }
 
 
 </script>
@@ -172,7 +189,20 @@
       {#if loading}
       <a class="btn btn-primary-outline display-4" ><span class="mbri-clock mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a>
       {/if}
-
+       <div class="btn btn-primary-outline display-4" >
+        <form on:submit|preventDefault={subscribe}>
+         <input class=" display-4 " style="font-size: 44px;"
+           type="number"
+           min= "9"
+           placeholder="Su fono"
+         />
+         <br><br><br><br> 
+         <button class="btn btn-primary display-4" type="submit">
+<span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn" style="font-size: 144px;">
+</span> Presione Aquí</button>
+       </form>
+      </div>
+      <br><br><br><br>
        <div class="mbr-section-btn mt-3">
          <form on:submit|preventDefault={transfer}>
           <button class= "btn btn-primary display-4" type="submit">

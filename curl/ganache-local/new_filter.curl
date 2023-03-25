@@ -1,0 +1,51 @@
+#https://docs.infura.io/infura/networks/ethereum/how-to/make-requests
+INFURA_API_KEY=5707a1c75350408cb408cba40175e252
+CONTRACT="0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
+ENDPOINT="http://127.0.0.1:8545"
+FILTER_ID="0x1f"
+
+
+echo "-------- Creando un Nuevo Filtro ---------"
+curl -H "Content-Type: application/json"  -X POST \
+$ENDPOINT \
+--data @/dev/stdin<<EOF
+ {
+  "jsonrpc":"2.0",
+  "method":"eth_newFilter",
+  "params":[
+    {
+      "topics" : [], 
+      "address": "$CONTRACT"}
+   ],
+  "id":1}
+EOF
+
+
+
+echo "----- Recuperando los Cambios ------------"
+curl -H "Content-Type: application/json"  -X POST \
+$ENDPOINT \
+--data @/dev/stdin<<EOF
+ {
+  "jsonrpc":"2.0",
+  "address": "$CONTRACT",
+  "method":"eth_getFilterChanges",
+  "params":["$FILTER_ID" ],
+  "id":1}
+EOF
+
+
+
+echo "---- Get Logs  -----------------"
+curl -H "Content-Type: application/json"  -X POST \
+$ENDPOINT \
+--data @/dev/stdin<<EOF
+ {
+  "jsonrpc":"2.0",
+  "method":"eth_getLogs",
+  "params":[{ "topics": [] }],
+  "id":1}
+EOF
+
+
+
