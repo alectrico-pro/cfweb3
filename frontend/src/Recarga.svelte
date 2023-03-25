@@ -145,10 +145,10 @@
             <div class="navbar-brand">
                 <span class="navbar-logo">
                     <a href="https://aelectrico.cl">
-                        <img src="assets/images/locoalicate-96x155.png" alt="aelectrico" style="height: 3rem;">
+                        <img src="assets/images/locoalicate-96x155.png" alt="Aelectrico" style="height: 3rem;">
                     </a>
                 </span>
-                <span class="navbar-caption-wrap"><a class="navbar-caption text-white text-primary display-4" href="#top">ALECTRICA</a></span>
+                <span class="navbar-caption-wrap"><a class="navbar-caption text-white text-primary display-4" href="#top">AELECTRICO</a></span>
             </div>
         </div>
     </nav>
