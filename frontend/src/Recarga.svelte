@@ -24,7 +24,7 @@
   let transferred = false;
   let loading = false;
 
-  let subscribe_url = "http://localhost";
+  let subscribe_url = "http://nft.alectrico.cl";
   let redeemed = false;
   let withdrawed = false;
 
@@ -144,11 +144,11 @@
         <div class="container">
             <div class="navbar-brand">
                 <span class="navbar-logo">
-                    <a href="https://aelectrico.cl">
-                        <img src="assets/images/locoalicate-96x155.png" alt="Aelectrico" style="height: 3rem;">
+                    <a href="https://alectrico.cl">
+                        <img src="assets/images/locoalicate-96x155.png" alt="Alectrico" style="height: 3rem;">
                     </a>
                 </span>
-                <span class="navbar-caption-wrap"><a class="navbar-caption text-white text-primary display-4" href="#top">AELECTRICO</a></span>
+                <span class="navbar-caption-wrap"><a class="navbar-caption text-white text-primary display-4" href="#top">ALECTRICO</a></span>
             </div>
         </div>
     </nav>
@@ -221,7 +221,7 @@
      {/if}
   {:else}
 
-      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://aelectrico.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
+      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://alectrico.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
                 <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                   Esta app acepta pagos en ETHER usando MetaMask. </h2>
 
