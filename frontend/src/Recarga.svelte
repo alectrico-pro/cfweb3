@@ -19,12 +19,13 @@
   let ownedTokens = [];
   let recentlyMintedTokens = [];
 
+  let fono = "";
   let account = null;
   let minted = false;
   let transferred = false;
   let loading = false;
 
-  let subscribe_url = "http://nft.alectrico.cl";
+  let server_url= "http://www.alectrico.d:5000";
   let redeemed = false;
   let withdrawed = false;
 
@@ -63,10 +64,36 @@
   }
 
   async function login() {
+
+    const options = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8"
+      }};
+
+    const request = {
+            method: (options.method || "GET"),
+            headers: (options.headers || {}),
+            body: (options.body || undefined),
+            mode: "no-cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            redirect: "follow",
+            referrer: "client", // no-referrer, *client
+        };
+    console.log( request );
+
+    loading = true;
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
     account = accounts[0];
+
+    console.log( request );
+
+    const response = await fetch(server_url + "/get_suscriptor_ether.json?ether_account=" + account, request);
+    loading = false;
+
     init();
    
   }
@@ -97,19 +124,63 @@
 
   }
 
-
   async function subscribe() {
+    const body = {
+      create_user: {
+        cookie: '',
+         orden_json: '',
+         pago_url: '',
+         token_ws: fono,
+         nombre: "",
+         email: "#{fono}.alectrico.cl",
+         fono: fono,
+         comuna: "Providencia",
+         descripcion: "",
+         direccion: "",
+         latitude: 0,
+         longitude: 0,
+         avisar: true,
+       }
+    };
+
+    console.log(JSON.stringify(body));
+   // await last_id.put("log:102", JSON.stringify(body), { expirationTtl: SEGUNDOS_DE_EXPIRACION })
 
 
-    loading = true;
-    transferred = false;
+    const options = {
+      body: JSON.stringify(body),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8"
+      }};
+    
+     const request = {
+            method: (options.method || "GET"),
+            headers: (options.headers || {}),
+            body: (options.body || undefined),
+            mode: "no-cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            redirect: "follow",
+            referrer: "client", // no-referrer, *client
+        };
+  console.log( request );
+  const response = await fetch(server_url + "/create_suscriptor_ether.json?ether_account=" + account + "&fono=" + fono , request);
 
-    const response = await fetch(subscribe_url)
-    const result = await response.json();
+ // console.log("antes de ir al servidor");
+  //  console.log( init);
+  //await last_id.put("log:102", "antes de ir al servidor", { expirationTtl: SEGUNDOS_DE_EXPIRACION })
+ // resultado = await fetch(server_url + "/create_suscriptor_ether", init);
+  //resultado = await fetch(server_url + "/comercio/servicios.json", init);
+
+ // console.log("despues de servidor");
+
+  //await last_id.put("log:103", "despues del servidor", { expirationTtl: SEGUNDOS_DE_EXPIRACION })
+ // console.log( resultado );
+  //await last_id.put("log:103:resultado", JSON.stringify(resultado), { expirationTtl: SEGUNDOS_DE_EXPIRACION })
 
 
   }
-
 
 </script>
 
@@ -195,6 +266,7 @@
            type="number"
            min= "9"
            placeholder="Su fono"
+           bind:value={fono}
          />
          <br><br><br><br> 
          <button class="btn btn-primary display-4" type="submit">
@@ -212,7 +284,7 @@
       </div>
       <br><br>
       <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
-      👋 Hola, dónenos algo de ETHER para contactarle con un electricista para una Visita en Providencia. Esto no cubre los costos de la Visita. Eso debe acordarlo directamente con el Electricista como un tema entre privados.</h2>
+      👋 Hola, dónenos algo de ETHER para contactarle con un electricista para una Visita en Providencia. Esto no cubrirá los costos de la Visita. Eso debe acordarlo directamente con el Electricista como un tema entre privados.</h2>
 
     {:else}
       <div class="mbr-section-btn mt-3">
@@ -221,7 +293,7 @@
      {/if}
   {:else}
 
-      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://alectrico.cl/providencia/providencia.html"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
+      <div class="mbr-section-btn mt-3"><a class="btn btn-primary display-4" href="https://wa.me/56945644889"><span class="socicon socicon-whatsapp mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-info display-4" href="tel:+56962000921"><span class="mobi-mbri mobi-mbri-phone mbr-iconfont mbr-iconfont-btn"></span></a> <a class="btn btn-primary-outline display-4" href="https://alectrico.cl/providencia"><span class="mbri-cart-add mbr-iconfont mbr-iconfont-btn" style="font-size: 44px;"></span><br><br></a></div>
                 <h2 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                   Esta app acepta pagos en ETHER usando MetaMask. </h2>
 

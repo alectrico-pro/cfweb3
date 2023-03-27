@@ -1,6 +1,7 @@
 
 networks:
   backend:
+  web:
 
 volumes:
   contract_node_modules:
@@ -306,7 +307,7 @@ services:
       - dev
       - -- host
     networks:
-      backend:
+      web:
 
 
 

@@ -60,5 +60,5 @@ mainnet:
 
 .PHONY: frontend
 frontend:
-	docker compose run frontend
+	docker compose up frontend
 
